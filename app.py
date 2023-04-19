@@ -1,11 +1,12 @@
 import os
 
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, request, flash, redirect, session, g, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from models import db, connect_db, User, Activity, Going, Likes, Follows
 from forms import UserAddForm, LoginForm, AddActivityForm
 import requests
+import json
 
 
 app = Flask(__name__)
@@ -58,6 +59,12 @@ def login_page():
     form2 = LoginForm()
 
     if form1.validate_on_submit():
+        response = requests.get(f'http://api.openweathermap.org/geo/1.0/direct?q={form1.city.data},{form1.state.data},USA&limit=1&appid=296cd6aaf1d515387c708caa99264128' )
+        data = json.loads(response.text)
+        lat = data[0]['lat']
+        lon = data[0]['lon']
+
+ 
         try:
             user = User.signup(
                 username=form1.username.data,
@@ -67,7 +74,9 @@ def login_page():
                 email=form1.email.data,
                 image_url=form1.image_url.data or User.image_url.default.arg,
                 city=form1.city.data,
-                state=form1.state.data
+                state=form1.state.data,
+                lat= lat,
+                lon=lon
             )
             print(user)
             print('*******************************')
@@ -171,17 +180,40 @@ def search_activity_page():
     """show activities so they can choose to search api for one"""
 
     user = g.user
-    response = requests.get(f'http://api.openweathermap.org/geo/1.0/direct?q={g.user.city},{g.user.state},USA&limit=1&appid=296cd6aaf1d515387c708caa99264128' )
-    print(dir(response))
-    print(response.text)
-    print('**********************************************')
-    print(response.json)
-    print('**********************************************')
-    print(response.content[1])
-    print('**********************************************')
-    print(dir(response.iter_content))
-    print('**********************************************')
+    response = requests.get(f'https://api.openweathermap.org/data/3.0/onecall?lat={user.lat}&lon={user.lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128' )
+    activity = Activity.query.first()
+    
+    session['day_data'] = json.loads(response.text)
+    # print(day_data)
 
     activities = Activity.query.all()
 
     return render_template('activities/search-activity.html', user = user, activities=activities)
+
+def serialize_activity(activity):
+    """make activity serialized for json"""
+    parameters = {}
+
+
+
+    return {
+        'min_temp': activity.min_temp, 
+        'max_temp': activity.max_temp,
+        'sun': activity.sun ,
+        'show_moon': activity.show_moon,
+        'moon_phase': activity.moon_phase,
+        'weather_condition': activity.weather_condition,
+        'uvi': activity.uvi
+    }
+
+@app.route('/api/search-activity/<int:activity_id>')
+def search_activity(activity_id):
+    """show activities so they can choose to search api for one"""
+
+    activity = Activity.query.get_or_404(activity_id)
+    serialized_activity = serialize_activity(activity)
+    print(session['day_data'])
+
+    return jsonify(search = {'days':session['day_data'], 'activity':serialized_activity})
+    # return jsonify(search = 'hello')
+

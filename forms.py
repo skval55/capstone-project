@@ -31,5 +31,5 @@ class AddActivityForm(FlaskForm):
     sun = BooleanField('Daylight',  validators=[Optional()])
     show_moon = BooleanField('Show Moon details',  validators=[Optional()])
     moon_phase = StringField('Moon Phase',  validators=[Optional()])
-    weather_conditon = SelectMultipleField('Weather Condition',  choices=[('', 'None'),('Clear', 'Clear Sky'), ('Clouds', 'Cloudy'), ('Snow', 'Snowy'), ('Rain', 'Rainy'), ('Drizzle', 'Drizzle'), ('Thunderstorm', 'Thunderstorm')])
+    weather_condition = SelectMultipleField('Weather Condition',  choices=[('', 'None'),('Clear', 'Clear Sky'), ('Clouds', 'Cloudy'), ('Snow', 'Snowy'), ('Rain', 'Rainy'), ('Drizzle', 'Drizzle'), ('Thunderstorm', 'Thunderstorm')])
     uvi = IntegerField('UVI',  validators=[Optional()])
