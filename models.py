@@ -98,7 +98,11 @@ class User(db.Model):
         default="/static/images/user-icon.png"
     )
 
-    location = db.Column(
+    city = db.Column(
+        db.Text
+    )
+
+    state = db.Column(
         db.Text
     )
 
@@ -136,7 +140,7 @@ class User(db.Model):
 
 
     @classmethod
-    def signup(cls, username,first_name, last_name, location, email, password, image_url):
+    def signup(cls, username,first_name, last_name, city, state, email, password, image_url):
         """Sign up user.
 
         Hashes password and adds user to system.
@@ -148,7 +152,8 @@ class User(db.Model):
             username=username,
             first_name=first_name,
             last_name=last_name,
-            location=location,
+            city=city,
+            state=state,
             email=email,
             password=hashed_pwd,
             image_url=image_url,
@@ -197,29 +202,31 @@ class Activity(db.Model):
 
     # day  = db.Column(db.datetime, nullable=False)
 
-    temp = db.Column(db.Integer)
+    min_temp = db.Column(db.Integer)
+    
+    max_temp = db.Column(db.Integer)
 
     sun = db.Column(db.Boolean)
 
-    sunset_time = db.Column(db.Integer)
+    # sunset_time = db.Column(db.Integer)
     
-    sunrise_time = db.Column(db.Integer)
+    # sunrise_time = db.Column(db.Integer)
 
-    moon = db.Column(db.Boolean)
+    show_moon = db.Column(db.Boolean)
 
-    moonrise_time = db.Column(db.Integer)
+    # moonrise_time = db.Column(db.Integer)
 
-    moonset_time = db.Column(db.Integer)
+    # moonset_time = db.Column(db.Integer)
 
     moon_phase = db.Column(db.Text)
 
-    weather_conditon = db.Column(db.Text)
+    weather_condition = db.Column(db.Text)
 
-    clouds = db.Column(db.Text)
+    # clouds = db.Column(db.Text)
 
     uvi = db.Column(db.Integer)
 
-    rain = db.Column(db.Integer)
+    # rain = db.Column(db.Integer)
 
 
 

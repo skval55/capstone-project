@@ -1,0 +1,24 @@
+{% extends 'activities/user.html' %}
+
+{% block title %}Animals{% endblock %}
+
+{% block content2 %}
+
+{% for activity in activities %}
+<div>
+    {{activity.name}}
+    {{activity.min_temp}}
+    {{activity.max_temp}}
+    {{activity.sun}}
+    {{activity.show_moon}}
+    {{activity.moon_phase}}
+    {{activity.weather_condition}}
+    {{activity.uvi}}
+
+</div>
+
+{% endfor %}
+
+
+
+{% endblock %}
