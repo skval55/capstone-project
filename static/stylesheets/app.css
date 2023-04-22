@@ -1,0 +1,11 @@
+img{
+    width: 100px;
+}
+
+.light{
+    background-color: rgb(0, 165, 236);
+}
+
+.dark{
+    background-color: rgb(2, 2, 141);
+}

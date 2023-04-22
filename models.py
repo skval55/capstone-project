@@ -230,7 +230,7 @@ class Activity(db.Model):
 
     # clouds = db.Column(db.Text)
 
-    uvi = db.Column(db.Integer)
+    uvi = db.Column(db.Text)
 
     # rain = db.Column(db.Integer)
 

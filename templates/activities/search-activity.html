@@ -4,6 +4,15 @@
 
 {% block content2 %}
 
+<form id="load" action="">
+    <label for="city">City</label>
+    <input id="city" type="text" placeholder="Enter a City">
+    <label for="state">State</label>
+    <input id="state" type="text" placeholder="Enter a State">
+
+    <button id="changeLocation" type="submit">Change Location</button>
+</form>
+
 {% for activity in activities %}
 <div>
     {{activity.name}}
@@ -15,6 +24,8 @@
     {{activity.weather_condition}}
     {{activity.uvi}}
     <button class="search-day" id="{{activity.id}}">search for day</button>
+
+    <div class="days" id="activity{{activity.id}}"></div>
 
 </div>
 

@@ -179,14 +179,15 @@ def filter_form(pair):
 def search_activity_page():
     """show activities so they can choose to search api for one"""
 
+
     user = g.user
-    response = requests.get(f'https://api.openweathermap.org/data/3.0/onecall?lat={user.lat}&lon={user.lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128' )
-    activity = Activity.query.first()
+    # response = requests.get(f'https://api.openweathermap.org/data/3.0/onecall?lat={user.lat}&lon={user.lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128' )
+
     
-    session['day_data'] = json.loads(response.text)
+    # session['day_data'] = json.loads(response.text)
     # print(day_data)
 
-    activities = Activity.query.all()
+    activities = Activity.query.filter(Activity.user_Id == user.id)
 
     return render_template('activities/search-activity.html', user = user, activities=activities)
 
@@ -197,6 +198,7 @@ def serialize_activity(activity):
 
 
     return {
+        'name': activity.name,
         'min_temp': activity.min_temp, 
         'max_temp': activity.max_temp,
         'sun': activity.sun ,
@@ -212,8 +214,19 @@ def search_activity(activity_id):
 
     activity = Activity.query.get_or_404(activity_id)
     serialized_activity = serialize_activity(activity)
-    print(session['day_data'])
 
-    return jsonify(search = {'days':session['day_data'], 'activity':serialized_activity})
-    # return jsonify(search = 'hello')
+
+    # return jsonify(search = {'days':session['day_data'], 'activity':serialized_activity})
+    return jsonify(search = {'activity':serialized_activity})
+
+@app.route('/api/get-day-data')
+def search_day_data():
+    """show activities so they can choose to search api for one"""
+
+    user = g.user
+    response = requests.get(f'https://api.openweathermap.org/data/3.0/onecall?lat={user.lat}&lon={user.lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128' )
+    days = json.loads(response.text)
+
+    return jsonify(search = {'days':days})
+    
 

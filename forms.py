@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 import email_validator
-from wtforms import StringField, PasswordField, TextAreaField, IntegerField, BooleanField, SelectMultipleField
+from wtforms import StringField, PasswordField, TextAreaField, IntegerField, BooleanField, SelectMultipleField, SelectField
 from wtforms.validators import DataRequired, Email, Length, Optional
 
 class UserAddForm(FlaskForm):
@@ -30,6 +30,6 @@ class AddActivityForm(FlaskForm):
     max_temp = IntegerField("Maximum Temperatue",  validators=[Optional()])
     sun = BooleanField('Daylight',  validators=[Optional()])
     show_moon = BooleanField('Show Moon details',  validators=[Optional()])
-    moon_phase = StringField('Moon Phase',  validators=[Optional()])
+    moon_phase = SelectField('Moon Phase',  choices=[('', 'None'),('0.97, 1.00', 'Full Moon'),('0.00, 0.03', 'New Moon'),('0.04, 0.39', 'Crescent Moon'),('0.40, 0.60', 'Quarter Moon'),('0.61, 0.96', 'Gibbous Moon')])
     weather_condition = SelectMultipleField('Weather Condition',  choices=[('', 'None'),('Clear', 'Clear Sky'), ('Clouds', 'Cloudy'), ('Snow', 'Snowy'), ('Rain', 'Rainy'), ('Drizzle', 'Drizzle'), ('Thunderstorm', 'Thunderstorm')])
-    uvi = IntegerField('UVI',  validators=[Optional()])
+    uvi = SelectField('UVI',  choices=[('', 'None'),('0.0,3.0', 'Low(0-2)'),('3.0,6.0', 'Medium(3-5)'),('6.0,8.0', 'High(6-8)'),('8.0,11.0', 'Very High(9-11)'),('11.0,15.0', 'Extreme(11+)')])
