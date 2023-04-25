@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g, 
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from models import db, connect_db, User, Activity, Going, Likes, Follows, Post
-from forms import UserAddForm, LoginForm, AddActivityForm, MakePostForm
+from forms import UserAddForm, LoginForm, AddActivityForm, MakePostForm, EditUserForm
 import requests
 import json
 
@@ -134,7 +134,7 @@ def logout():
 
 
 ##############################################################
-# other routes
+# user routes
 
 @app.route('/users')
 def show_profile():
@@ -143,6 +143,48 @@ def show_profile():
 
     return render_template('activities/user.html', user = user)
 
+@app.route('/users/edit', methods=['POST','GET'])
+def edit_user():
+    """edit user info"""
+    user = g.user
+    form = EditUserForm()
+
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.first_name = form.first_name.data
+        user.last_name = form.last_name.data
+        user.email = form.email.data
+        user.image_url = form.image_url.data
+        user.city = form.city.data
+        user.state = form.state.data
+        db.session.commit()
+
+        return redirect('/homepage/posts')
+
+    return render_template('activities/edit-user.html', user = user, form = form)
+
+@app.route('/users/delete/sure')
+def permission_to_delete():
+    """page to be sure ro delete profile"""
+    user = g.user
+    return render_template('activities/sure-delete.html', user=user)
+
+
+@app.route('/users/delete', methods=['POST'])
+def delete_user():
+    """delete user"""
+
+    user = g.user
+    db.session.delete(user)
+    db.session.commit()
+
+    do_logout()
+
+    return redirect('/')
+
+
+##############################################################
+# activity routes
 
 @app.route('/add-activity', methods=['POST', 'GET'])
 def add_activity():
@@ -230,6 +272,11 @@ def search_activity_page():
 
     return render_template('activities/search-activity.html', user = user, activities=activities)
 
+
+##############################################################
+# post routes
+
+
 @app.route('/make-post/<int:activity_id>' , methods=['POST', 'GET'])
 def make_post(activity_id):
     """show make post form and post post to main page"""
@@ -276,45 +323,6 @@ def show_posts():
 
     return render_template('activities/posts.html', posts=posts, user=user)
 
-
-def serialize_activity(activity):
-    """make activity serialized for json"""
-    parameters = {}
-
-
-
-    return {
-        'name': activity.name,
-        'min_temp': activity.min_temp, 
-        'max_temp': activity.max_temp,
-        'sun': activity.sun ,
-        'show_moon': activity.show_moon,
-        'moon_phase': activity.moon_phase,
-        'weather_condition': activity.weather_condition,
-        'uvi': activity.uvi
-    }
-
-@app.route('/api/search-activity/<int:activity_id>')
-def search_activity(activity_id):
-    """show activities so they can choose to search api for one"""
-
-    activity = Activity.query.get_or_404(activity_id)
-    serialized_activity = serialize_activity(activity)
-
-
-    # return jsonify(search = {'days':session['day_data'], 'activity':serialized_activity})
-    return jsonify(search = {'activity':serialized_activity})
-
-@app.route('/api/get-day-data')
-def search_day_data():
-    """show activities so they can choose to search api for one"""
-
-    user = g.user
-    response = requests.get(f'https://api.openweathermap.org/data/3.0/onecall?lat={user.lat}&lon={user.lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128' )
-    days = json.loads(response.text)
-
-    return jsonify(search = {'days':days})
-    
 @app.route('/delete-post/<int:post_id>')
 def delete_post(post_id):
     """delete post"""
@@ -341,6 +349,51 @@ def edit_post(post_id):
     
 
     return render_template('activities/edit-post.html', user= user, form=form, post=post)
+
+def serialize_activity(activity):
+    """make activity serialized for json"""
+    parameters = {}
+
+
+
+    return {
+        'name': activity.name,
+        'min_temp': activity.min_temp, 
+        'max_temp': activity.max_temp,
+        'sun': activity.sun ,
+        'show_moon': activity.show_moon,
+        'moon_phase': activity.moon_phase,
+        'weather_condition': activity.weather_condition,
+        'uvi': activity.uvi
+    }
+
+
+##############################################################
+# API routes
+
+
+@app.route('/api/search-activity/<int:activity_id>')
+def search_activity(activity_id):
+    """show activities so they can choose to search api for one"""
+
+    activity = Activity.query.get_or_404(activity_id)
+    serialized_activity = serialize_activity(activity)
+
+
+    # return jsonify(search = {'days':session['day_data'], 'activity':serialized_activity})
+    return jsonify(search = {'activity':serialized_activity})
+
+@app.route('/api/get-day-data')
+def search_day_data():
+    """show activities so they can choose to search api for one"""
+
+    user = g.user
+    response = requests.get(f'https://api.openweathermap.org/data/3.0/onecall?lat={user.lat}&lon={user.lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128' )
+    days = json.loads(response.text)
+
+    return jsonify(search = {'days':days})
+    
+
 
 
 

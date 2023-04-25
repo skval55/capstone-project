@@ -1,0 +1,33 @@
+{% extends 'activities/user.html' %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block content2 %}
+
+
+{% for category, message in get_flashed_messages(with_categories=True) %}
+<div class="alert alert-{{ category }}">{{ message }}</div>
+{% endfor %}
+<form action="/users/edit" method="Post">
+
+    {{ form.hidden_tag() }} <!--add type=hidden form fields -->
+
+    {% for field in form
+    if field.widget.input_type != 'hidden' %}
+
+    <p>
+        {{ field.label }}
+        {{ field(value=user[field.id]) }}
+
+        {% for error in field.errors %}
+        {{ error }}
+        {% endfor %}
+    </p>
+
+    {% endfor %}
+
+    <button type="submit">Save</button>
+    <a href="/users">Cancel</a>
+</form>
+
+{% endblock %}
