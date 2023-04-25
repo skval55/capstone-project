@@ -3,8 +3,8 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-from models import db, connect_db, User, Activity, Going, Likes, Follows
-from forms import UserAddForm, LoginForm, AddActivityForm
+from models import db, connect_db, User, Activity, Going, Likes, Follows, Post
+from forms import UserAddForm, LoginForm, AddActivityForm, MakePostForm
 import requests
 import json
 
@@ -20,9 +20,19 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 toolbar = DebugToolbarExtension(app)
 
-CURR_USER_KEY = "curr_user"
+
 
 connect_db(app)
+
+# Custom Jinja2 filter to deserialize JSON strings
+@app.template_filter('json_loads')
+def json_loads_filter(value):
+    return json.loads(value)
+
+##########################################################
+# global variables
+CURR_USER_KEY = "curr_user"
+
 
 # db.drop_all()
 # db.create_all()
@@ -87,7 +97,7 @@ def login_page():
             return render_template('base.html', form1=form1, form2=form2)
         
         do_login(user)
-        return redirect("/homepage")
+        return redirect("/homepage/posts")
 
     if form2.validate_on_submit():
     
@@ -166,9 +176,44 @@ def add_activity():
 
     return render_template('activities/add-activity.html', form = form, user = user)
 
+@app.route('/edit-activity/<int:activity_id>', methods=['POST', 'GET'])
+def editActivity(activity_id):
+    """edit activity"""
+    user = g.user
+    activity = Activity.query.get_or_404(activity_id)
+    form = AddActivityForm()
+
+    if form.validate_on_submit():
+        data = dict(filter(filter_form, form.data.items()))
+        activity.name = data.get('name')
+        activity.max_temp = data.get('min_temp', None)
+        activity.min_temp = data.get('max_temp', None)
+        activity.sun = data.get('sun', None)
+        activity.show_moon = data.get('moon_phase', None)
+        activity.moon_phase = data.get('weather_condition', None)
+        activity.weather_condition = data.get('weather_condition', None)
+        activity.uvi = data.get('uvi', None)
+        db.session.commit()
+
+        return redirect('/search-activity')
+
+    
+    return render_template('activities/edit-activity.html', form = form, user = user, activity=activity)
+
+@app.route('/delete-activity/<int:activity_id>')
+def delete_activity(activity_id):
+    """delete post"""
+
+    activity = Activity.query.get_or_404(activity_id)
+    db.session.delete(activity)
+    db.session.commit()
+
+    return redirect('/search-activity')
+
+
 def filter_form(pair):
     unwanted_key = 'csrf_token'
-    unwanted_values = ['', None, ['']]
+    unwanted_values = ['', None, [''], {}]
     key, value = pair
     if key == unwanted_key or value in unwanted_values:
         return False
@@ -179,17 +224,58 @@ def filter_form(pair):
 def search_activity_page():
     """show activities so they can choose to search api for one"""
 
-
     user = g.user
-    # response = requests.get(f'https://api.openweathermap.org/data/3.0/onecall?lat={user.lat}&lon={user.lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128' )
-
-    
-    # session['day_data'] = json.loads(response.text)
-    # print(day_data)
 
     activities = Activity.query.filter(Activity.user_Id == user.id)
 
     return render_template('activities/search-activity.html', user = user, activities=activities)
+
+@app.route('/make-post/<int:activity_id>' , methods=['POST', 'GET'])
+def make_post(activity_id):
+    """show make post form and post post to main page"""
+    
+    dayStr = request.form['day-data']
+    day = json.loads(dayStr)
+    session["day_data"] = day
+
+    form = MakePostForm()
+    user = g.user
+    activity = Activity.query.get_or_404(activity_id)
+
+    return render_template('activities/make-post.html', form=form, user=user, activity = activity, day=day )
+
+
+@app.route('/make-post/post' , methods=['POST'])
+def post_post():
+
+    user = g.user
+    day = session['day_data']
+    print(day)
+    print('#####################################')
+    form = MakePostForm()
+
+    if form.validate_on_submit():
+        post = Post(
+            user_Id = user.id,
+            activity_Id = day['activityId'],
+            title = form.data['title'],
+            description = form.data['description'],
+            weather_data = json.dumps(day),
+            public = form.data['public']
+        )
+        db.session.add(post)
+        db.session.commit()
+        return redirect('/homepage/posts')
+
+
+
+@app.route('/homepage/posts')
+def show_posts():
+    user = g.user
+    posts = Post.query.filter(Post.user_Id == user.id)
+
+    return render_template('activities/posts.html', posts=posts, user=user)
+
 
 def serialize_activity(activity):
     """make activity serialized for json"""
@@ -229,4 +315,33 @@ def search_day_data():
 
     return jsonify(search = {'days':days})
     
+@app.route('/delete-post/<int:post_id>')
+def delete_post(post_id):
+    """delete post"""
+
+    post = Post.query.get_or_404(post_id)
+    db.session.delete(post)
+    db.session.commit()
+
+    return redirect('/homepage/posts')
+
+@app.route('/edit-post/<int:post_id>', methods=['POST'])
+def edit_post(post_id):
+
+    user = g.user
+    form = MakePostForm()
+    post = Post.query.get_or_404(post_id)
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.description = form.description.data
+        post.public = form.public.data
+        db.session.commit()
+
+        return redirect('/homepage/posts')
+    
+
+    return render_template('activities/edit-post.html', user= user, form=form, post=post)
+
+
+
 

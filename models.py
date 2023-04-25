@@ -204,37 +204,44 @@ class Activity(db.Model):
 
     name = db.Column(db.Text, nullable=False)
 
-    # timestamp = db.Column(db.datetime, default=now)
-
-    # day  = db.Column(db.datetime, nullable=False)
-
     min_temp = db.Column(db.Integer)
     
     max_temp = db.Column(db.Integer)
 
     sun = db.Column(db.Boolean)
 
-    # sunset_time = db.Column(db.Integer)
-    
-    # sunrise_time = db.Column(db.Integer)
-
     show_moon = db.Column(db.Boolean)
-
-    # moonrise_time = db.Column(db.Integer)
-
-    # moonset_time = db.Column(db.Integer)
 
     moon_phase = db.Column(db.Text)
 
     weather_condition = db.Column(db.Text)
 
-    # clouds = db.Column(db.Text)
-
     uvi = db.Column(db.Text)
 
-    # rain = db.Column(db.Integer)
 
+class Post(db.Model):
+    """posts model"""
 
+    __tablename__ = 'posts'
+
+    id = db.Column(db.Integer,
+        primary_key=True)
+
+    user_Id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade"))
+ 
+    activity_Id = db.Column(
+        db.Integer,
+        db.ForeignKey('activities.id', ondelete="cascade"))
+
+    title = db.Column(db.Text, nullable=False)
+
+    description = db.Column(db.Text)
+
+    weather_data = db.Column(db.Text)
+
+    public = db.Column(db.Boolean)
 
 def connect_db(app):
     """Connect this database to provided Flask app.
@@ -245,3 +252,4 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
     app.app_context().push()
+

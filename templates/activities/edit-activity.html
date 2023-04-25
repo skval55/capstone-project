@@ -1,0 +1,35 @@
+{% extends 'activities/user.html' %}
+
+{% block title %}Animals{% endblock %}
+
+{% block content2 %}
+
+
+<form action="/edit-activity/{{activity.id}}" method="Post">
+
+    {{ form.hidden_tag() }} <!--add type=hidden form fields -->
+
+    {% for field in form
+    if field.widget.input_type != 'hidden' %}
+
+    <p>
+        {% if field.name == 'weather_condition' %}
+
+        {{ field.label }}
+        {{ field(rows = 7, multiple=True) }}
+        {% else %}
+        {{ field.label }}
+        {{ field(value=activity[field.id])}}
+        {% endif %}
+
+        {% for error in field.errors %}
+        {{ error }}
+        {% endfor %}
+    </p>
+
+    {% endfor %}
+
+    <button type="submit">Add Activity</button>
+</form>
+
+{% endblock %}

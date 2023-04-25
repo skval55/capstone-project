@@ -3,6 +3,13 @@ let userActivity;
 $(".search-day").click(getDayAndActivity);
 $("#changeLocation").click(changeLocation);
 $("#load").ready(getData);
+// $(".delete-post").click(deletePost);
+
+// async function deletePost(e) {
+//   console.log(e.target.value);
+//   const response = await axios.get(`/api/delete-post/${e.target.value}`);
+//   console.log(response);
+// }
 
 async function getDayAndActivity(e) {
   $(".days").html("");
@@ -11,57 +18,91 @@ async function getDayAndActivity(e) {
   const filteredDays = filterDays(userActivity, dailyData);
   for (day in filteredDays) {
     console.log(dailyData[day]);
-    makeHtmlCard(day, e);
+    collectHtmlCardData(day, e);
   }
 }
 
-function makeHtmlCard(day, e) {
+function collectHtmlCardData(day, e) {
   const dayData = dailyData[day];
-  const myDate = new Date(dayData.dt * 1000);
-  let icon = dailyData[day].weather[0].icon;
+  let icon = dayData.weather[0].icon;
   let theme = "light";
-  let moonDetails;
+  let showMoon;
   const timeOfDay = Object.keys(filteredDays[day][0]).filter(
     (time) => !["min", "max"].includes(time)
   );
+
   if (filteredDays[day][1] == false) {
-    moonDetails = "hidden";
+    showMoon = "hidden";
   }
   if (timeOfDay.includes("night")) {
     icon = icon.slice(0, 2) + "n";
     theme = "dark";
   }
-  $(`#activity${e.target.id}`)
-    .append(`<div> <div class="temps${day}">best time to go ${
-    userActivity.name
-  } would be in the ${timeOfDay}</div>
-    <div class=' ${theme}'><img src="https://openweathermap.org/img/wn/${icon}@2x.png" alt="">
-    <h3>${myDate.toLocaleString()}</h3>
-    <div>${dailyData[day].weather[0].description}</div>
-   <div>High: ${dailyData[day].temp.max} Low: ${dailyData[day].temp.min}</div>
-   <div>Morning: ${dailyData[day].temp.morn} Day: ${
-    dailyData[day].temp.day
-  } Evening: ${dailyData[day].temp.eve} Night: ${
-    dailyData[day].temp.night
+  const times = {
+    dt: makeTimeReadable(dayData.dt),
+    sunrise: makeTimeReadable(dayData.sunrise),
+    sunset: makeTimeReadable(dayData.sunset),
+    moonrise: makeTimeReadable(dayData.moonrise),
+    moonset: makeTimeReadable(dayData.moonset),
+  };
+  const dataToSend = {
+    timeOfDay: timeOfDay,
+    dayIndex: day,
+    temp: dayData.temp,
+    weather: dayData.weather[0],
+    rain: dayData.pop * 100,
+    moonPhase: dayData.moon_phase * 100,
+    showMoon: showMoon,
+    uvi: dayData.uvi,
+    icon: icon,
+    theme: theme,
+    times: times,
+    activity: userActivity.name,
+    activityId: e.target.id,
+  };
+
+  makeHtmlTemplate(dataToSend);
+}
+
+function makeHtmlTemplate(dataToSend) {
+  $(`#activity${dataToSend.activityId}`).append(`<div> <div class="temps${
+    dataToSend.dayIndex
+  }">best time to go ${dataToSend.activity} would be in the ${
+    dataToSend.timeOfDay
   }</div>
-    <div>Sunrise ${new Date(
-      dailyData[day].sunrise * 1000
-    ).toLocaleString()}</div>
-    <div>Sunset ${new Date(dailyData[day].sunset * 1000).toLocaleString()}</div>
-    <div class="${moonDetails} ">
-    <div>Moonrise ${new Date(
-      dailyData[day].moonrise * 1000
-    ).toLocaleString()}</div>
-    <div>Moonset ${new Date(
-      dailyData[day].moonset * 1000
-    ).toLocaleString()}</div>
-    <div>Moon coverage ${dailyData[day].moon_phase * 100}%</div>
+    <div class=' ${
+      dataToSend.theme
+    }'><img src="https://openweathermap.org/img/wn/${
+    dataToSend.icon
+  }@2x.png" alt="">
+    <h3>${dataToSend.times.dt}</h3>
+    <div>${dataToSend.weather.description}</div>
+   <div>High: ${dataToSend.temp.max} Low: ${dataToSend.temp.min}</div>
+   <div>Morning: ${dataToSend.temp.morn} Day: ${dataToSend.temp.day} Evening: ${
+    dataToSend.temp.eve
+  } Night: ${dataToSend.temp.night}</div>
+    <div>Sunrise ${dataToSend.times.sunrise}</div>
+    <div>Sunset ${dataToSend.times.sunset}</div>
+    <div class="${dataToSend.showMoon} ">
+    <div>Moonrise ${dataToSend.times.moonrise}</div>
+    <div>Moonset ${dataToSend.times.moonset}</div>
+    <div>Moon coverage ${dataToSend.moonPhase}%</div>
     </div>
-    <div>Percentage of Rain ${dailyData[day].pop * 100}%</div>
-    <div>UVI ${dailyData[day].uvi} (highest between 11am - 2pm)</div>
+    <div>Percentage of Rain ${dataToSend.rain}%</div>
+    <div>UVI ${dataToSend.uvi} (highest between 11am - 2pm)</div>
     </div>
+    <form action='/make-post/${dataToSend.activityId}' method='post'>
+    <input class='hidden' name='day-data' id="day-data" value='${JSON.stringify(
+      dataToSend
+    )}' type='text'>
+    <button id='${dataToSend.dayIndex}' type='submit' >Make post</button>
+    </form>
     </div>
     `);
+}
+
+function makeTimeReadable(time) {
+  return new Date(time * 1000).toLocaleString();
 }
 
 async function getData() {

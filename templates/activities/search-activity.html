@@ -16,13 +16,55 @@
 {% for activity in activities %}
 <div>
     {{activity.name}}
-    {{activity.min_temp}}
-    {{activity.max_temp}}
-    {{activity.sun}}
-    {{activity.show_moon}}
-    {{activity.moon_phase}}
-    {{activity.weather_condition}}
-    {{activity.uvi}}
+    {% if activity.min_temp %}
+    <div> Min temp:
+        {{activity.min_temp}}
+    </div>
+    {% endif %}
+    {% if activity.max_temp %}
+    <div> Max temp:
+        {{activity.max_temp}}
+    </div>
+    {% endif %}
+    <div>
+        {% if activity.sun %}
+        Daylight: Yes
+        {% else %}
+        Daylight: No
+        {% endif %}
+    </div>
+    <div>
+        {% if activity.show_moon %}
+        Show moon details: Yes
+        {% else %}
+        Show moon details: No
+        {% endif %}
+    </div>
+    {% if activity.moon_phase %}
+    <div> Moon phase:
+        {{activity.moon_phase}}</div>
+    {% endif %}
+    {% if activity.weather_condition != '{}' %}
+    <div>Weather Condition
+        {% set weather_conditions = activity.weather_condition.replace('{', '').replace('}', '').split(',') %}
+        {% for condition in weather_conditions %}
+        <div>{{condition}}</div>
+        {% endfor %}
+
+    </div>
+    {% endif %}
+    {% if activity.uvi %}
+    <div>UVI Index:
+        {{activity.uvi.replace(',','-')}}
+    </div>
+    {% endif %}
+    <form action="/edit-activity/{{activity.id}}">
+        <button type="submit">Edit</button>
+    </form>
+    <form action="/delete-activity/{{activity.id}}">
+        <button type="submit">Delete</button>
+    </form>
+
     <button class="search-day" id="{{activity.id}}">search for day</button>
 
     <div class="days" id="activity{{activity.id}}"></div>
