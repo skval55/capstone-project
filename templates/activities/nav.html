@@ -1,0 +1,53 @@
+{% extends 'activities/user.html' %}
+{% block content %}
+
+<nav class="fixed top-0 w-full z-40 bg-zinc-900 text-white py-2">
+    <div class="container mx-auto px-4">
+        <ul class="flex justify-between">
+            <li class="flex">
+                <a href="/">
+                    <img src="/static/images/climate-connect-logo2.png" alt="fingerprint" class="w-12 h-12 mr-4"
+                        id="crimescope-img-header" />
+                </a>
+                <a href="/" class=" text-2xl font-bold text-gray-200 ">ClimateConnect</a>
+            </li>
+            {% if get_flashed_messages() %}
+            <li id="flash-container"
+                class="absolute z-40 top-16 md:top-16 w-full text-center left-1/2 transform -translate-x-1/2 text-2xl font-bold text-emerald-300 bg-black p-4">
+                {% for category, message in
+                get_flashed_messages(with_categories=True) %}
+                <div id="flashed-messages" class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </li>
+            {% endif %}
+
+            <li id="flash-container-js"
+                class="hidden absolute z-40 top-16 md:top-16 w-full text-center left-1/2 transform -translate-x-1/2 text-2xl font-bold text-emerald-300 bg-black p-4">
+            </li>
+
+            <li>
+                <ul class="flex space-x-4 mt-1">
+                    {% if not g.user %}
+
+                    {% else %}
+                    <li>
+                        <a href="/" class="nav-link font-bold text-gray-500 hover:underline">Search
+                            city</a>
+                    </li>
+                    <li>
+                        <a href="/homepage/posts" class="nav-link font-bold text-gray-500 hover:underline">Your
+                            profile</a>
+                    </li>
+                    <li>
+                        <a href="/logout" class="nav-link font-bold text-gray-500 hover:underline">Log
+                            out</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+{% endblock %}

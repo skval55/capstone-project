@@ -21,8 +21,8 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 toolbar = DebugToolbarExtension(app)
 
 
-
-connect_db(app)
+with app.app_context():
+    connect_db(app)
 
 # Custom Jinja2 filter to deserialize JSON strings
 @app.template_filter('json_loads')
@@ -94,7 +94,7 @@ def login_page():
 
         except IntegrityError:
             flash("Username or email already taken")
-            return render_template('base.html', form1=form1, form2=form2)
+            return render_template('activities/base.html', form1=form1, form2=form2)
         
         do_login(user)
         return redirect("/homepage/posts")
@@ -117,7 +117,7 @@ def login_page():
         return render_template('base.html', form1=form1, form2=form2)
 
         
-    return render_template('base.html', form1=form1, form2=form2)
+    return render_template('activities/base.html', form1=form1, form2=form2)
 
 
 @app.route('/homepage')

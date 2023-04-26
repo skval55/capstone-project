@@ -11,6 +11,12 @@ $("#load").ready(getData);
 //   console.log(response);
 // }
 
+$(".show-sign-up-form").click(function (e) {
+  e.preventDefault();
+  $("#sign-in").toggleClass("hidden");
+  $("#sign-up").toggleClass("hidden");
+});
+
 async function getDayAndActivity(e) {
   $(".days").html("");
   const response = await axios.get(`/api/search-activity/${e.target.id}`);
