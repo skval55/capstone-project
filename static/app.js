@@ -1,5 +1,7 @@
 let dailyData;
 let userActivity;
+let city = "";
+let state = "";
 $(".search-day").click(getDayAndActivity);
 $("#changeLocation").click(changeLocation);
 $("#load").ready(getData);
@@ -16,11 +18,26 @@ $(".show-sign-up-form").click(function (e) {
   $("#sign-in").toggleClass("hidden");
   $("#sign-up").toggleClass("hidden");
 });
+let counter = 0;
+const landingPageTextArray = [
+  "Easily plan activities according to the weather",
+  "Connect with others to plan and prepare for activities",
+];
+setInterval(function () {
+  $(".landing-page-text").text(landingPageTextArray[counter]);
+  if (counter == 1) {
+    counter = 0;
+  } else {
+    counter++;
+  }
+}, 3500);
 
 async function getDayAndActivity(e) {
   $(".days").html("");
   const response = await axios.get(`/api/search-activity/${e.target.id}`);
   userActivity = response.data.search.activity;
+  city = response.data.search.city;
+  state = response.data.search.state;
   const filteredDays = filterDays(userActivity, dailyData);
   for (day in filteredDays) {
     console.log(dailyData[day]);
@@ -45,13 +62,15 @@ function collectHtmlCardData(day, e) {
     theme = "dark";
   }
   const times = {
-    dt: makeTimeReadable(dayData.dt),
+    dt: makeDateReadable(dayData.dt),
     sunrise: makeTimeReadable(dayData.sunrise),
     sunset: makeTimeReadable(dayData.sunset),
     moonrise: makeTimeReadable(dayData.moonrise),
     moonset: makeTimeReadable(dayData.moonset),
   };
   const dataToSend = {
+    city: city,
+    state: state,
     timeOfDay: timeOfDay,
     dayIndex: day,
     temp: dayData.temp,
@@ -107,8 +126,24 @@ function makeHtmlTemplate(dataToSend) {
     `);
 }
 
+const daysOfWeek = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+function makeDateReadable(time) {
+  return `${daysOfWeek[new Date(time * 1000).getDay()]}, ${new Date(
+    time * 1000
+  ).toLocaleDateString()}`;
+}
+
 function makeTimeReadable(time) {
-  return new Date(time * 1000).toLocaleString();
+  return new Date(time * 1000).toLocaleTimeString();
 }
 
 async function getData() {
@@ -118,8 +153,8 @@ async function getData() {
 
 async function changeLocation(e) {
   e.preventDefault();
-  const city = $("#city").val();
-  const state = $("#state").val();
+  city = $("#city").val();
+  state = $("#state").val();
   const response = await axios.get(
     `http://api.openweathermap.org/geo/1.0/direct?q=${city},${state},USA&limit=1&appid=296cd6aaf1d515387c708caa99264128`
   );
@@ -130,6 +165,11 @@ async function changeLocation(e) {
     `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128`
   );
   dailyData = weatherResponse.data.daily;
+
+  $("#city").val("");
+  $("#state").val("");
+  $(".city").text(city);
+  $(".state").text(state);
 }
 
 function filterDays(activity, days) {

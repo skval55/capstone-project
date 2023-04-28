@@ -3,41 +3,71 @@
 {% block title %}Make Post{% endblock %}
 
 {% block content2 %}
-<div class="posts">
-    {% for post in posts %}
-    <h3>{{post.title}}</h3>
-    <p>{{post.description}}</p>
-    <div class=' {{
-    (post.weather_data |json_loads).theme
-  }}'><img src="https://openweathermap.org/img/wn/{{
-  (post.weather_data |json_loads).icon
-}}@2x.png" alt="">
-        <h3>{{(post.weather_data |json_loads).times.dt}}</h3>
-        <div>{{(post.weather_data |json_loads).weather.description}}</div>
-        <div>High: {{(post.weather_data |json_loads).temp.max}} Low: {{(post.weather_data |json_loads).temp.min}}</div>
-        <div>Morning: {{(post.weather_data |json_loads).temp.morn}} Day: {{(post.weather_data |json_loads).temp.day}}
-            evening: {{
-            (post.weather_data |json_loads).temp.eve
-            }} Night: {{(post.weather_data |json_loads).temp.night}}</div>
-        <div>Sunrise {{(post.weather_data |json_loads).times.sunrise}}</div>
-        <div>Sunset {{(post.weather_data |json_loads).times.sunset}}</div>
-        <div class="{{(post.weather_data |json_loads).showMoon}} ">
-            <div>Moonrise {{(post.weather_data |json_loads).times.moonrise}}</div>
-            <div>Moonset {{(post.weather_data |json_loads).times.moonset}}</div>
-            <div>Moon coverage {{(post.weather_data |json_loads).moonPhase}}%</div>
+<div class="posts flex flex-wrap justify-center gap-3 bg-zinc-700 text-gray-200 ">
+    <div class="container">
+        {% for post in posts %}
+        <div class="w-90 bg-zinc-800 rounded flex flex-col p-3 justify-between gap-2 m-2">
+            <!-- <div class="flex flex-row justify-between"> -->
+            <div>
+                <div class="flex flex-row justify-between">
+                    <h3 class="text-2xl capitalize">{{post.title}}</h3>
+                    <div class="flex my-1 gap-2">
+                        <form action="/edit-post/{{post.id}}">
+                            <button class="edit-post border px-3 py-1 bg-gray-500 rounded hover:bg-gray-700"
+                                value="{{post.id}}">Edit</button>
+                        </form>
+                        <form action="/delete-post/{{post.id}}">
+                            <button class="delete-post border px-3 py-1 bg-gray-500 rounded hover:bg-gray-700"
+                                value="{{post.id}}">Delete</button>
+                        </form>
+                    </div>
+                </div>
+                <p>{{post.description}}</p>
+
+                <!-- </div> -->
+                <div
+                    class='grid shadow-inner grid-cols-1 sm:grid-cols-2 sm:gap-4 rounded border-solid  p-2 {{(post.weather_data |json_loads).theme }}'>
+                    <!-- <div class="flex flex-col"> -->
+                    <!-- <div class="flex flex-row justify-around"> -->
+                    <img src="https://openweathermap.org/img/wn/{{
+                            (post.weather_data |json_loads).icon
+                        }}@2x.png" alt="">
+                    <div class="mt-3 ">
+                        <div>{{(post.weather_data |json_loads).city}}, {{(post.weather_data |json_loads).state}}
+                        </div>
+                        <h3>{{(post.weather_data |json_loads).times.dt}}</h3>
+                    </div>
+                    <!-- </div> -->
+                    <!-- <div class="flex flex-row justify-around"> -->
+                    <div>
+                        <div>{{(post.weather_data |json_loads).weather.description}}</div>
+                        <div>High: {{(post.weather_data |json_loads).temp.max}} Low: {{(post.weather_data
+                            |json_loads).temp.min}}
+                        </div>
+                        <div>Morning: {{(post.weather_data |json_loads).temp.morn}} <br> Day: {{(post.weather_data
+                            |json_loads).temp.day}} <br>
+                            evening: {{
+                            (post.weather_data |json_loads).temp.eve
+                            }} <br> Night: {{(post.weather_data |json_loads).temp.night}}</div>
+                    </div>
+
+                    <div>
+                        <div>Sunrise {{(post.weather_data |json_loads).times.sunrise}}</div>
+                        <div>Sunset {{(post.weather_data |json_loads).times.sunset}}</div>
+                        <div class="{{(post.weather_data |json_loads).showMoon}} ">
+                            <div>Moonrise {{(post.weather_data |json_loads).times.moonrise}}</div>
+                            <div>Moonset {{(post.weather_data |json_loads).times.moonset}}</div>
+                            <div>Moon coverage {{(post.weather_data |json_loads).moonPhase}}%</div>
+                        </div>
+                        <div>Percentage of Rain {{(post.weather_data |json_loads).rain}}%</div>
+                        <div>UVI {{(post.weather_data |json_loads).uvi}} <br> (highest between 11am - 2pm)</div>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <div>Percentage of Rain {{(post.weather_data |json_loads).rain}}%</div>
-        <div>UVI {{(post.weather_data |json_loads).uvi}} (highest between 11am - 2pm)</div>
+        {% endfor %}
     </div>
-    <form action="/edit-post/{{post.id}}">
-        <button class="edit-post" value="{{post.id}}">Edit</button>
-    </form>
-    <form action="/delete-post/{{post.id}}">
-        <button class="delete-post" value="{{post.id}}">Delete</button>
-    </form>
-
-
-    {% endfor %}
 </div>
 
 

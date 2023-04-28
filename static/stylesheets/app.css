@@ -10,3 +10,6 @@ img{
     background-color: rgb(2, 2, 141);
 }
 
+#landing-page-text {
+    transition: all 1s ease-in;
+  }

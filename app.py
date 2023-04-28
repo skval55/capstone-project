@@ -110,7 +110,7 @@ def login_page():
         print("*****************************************")
         if user:
             do_login(user)
-            return redirect("/homepage")
+            return redirect("/homepage/posts")
 
         
         flash("Incorrect Username or Password")
@@ -375,13 +375,11 @@ def serialize_activity(activity):
 @app.route('/api/search-activity/<int:activity_id>')
 def search_activity(activity_id):
     """show activities so they can choose to search api for one"""
-
+    user = g.user
     activity = Activity.query.get_or_404(activity_id)
-    serialized_activity = serialize_activity(activity)
+    serialized_activity = serialize_activity( activity)
 
-
-    # return jsonify(search = {'days':session['day_data'], 'activity':serialized_activity})
-    return jsonify(search = {'activity':serialized_activity})
+    return jsonify(search = {'activity':serialized_activity, 'city':user.city, 'state':user.state})
 
 @app.route('/api/get-day-data')
 def search_day_data():

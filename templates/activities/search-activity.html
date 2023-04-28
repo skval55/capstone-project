@@ -4,7 +4,11 @@
 {% endblock %}
 
 {% block content2 %}
-<link rel="icon" href="/static/images/climate-connect-logo.png" type="image/x-icon" />
+<h3> location set to</h3>
+<div>City: <span class='city'>{{user.city}}</span>
+</div>
+<div>State: <span class="state">{{user.state}}</span>
+</div>
 <form id="load" action="">
     <label for="city">City</label>
     <input id="city" type="text" placeholder="Enter a City">
@@ -45,7 +49,7 @@
     <div> Moon phase:
         {{activity.moon_phase}}</div>
     {% endif %}
-    {% if activity.weather_condition != '{}' %}
+    {% if activity.weather_condition not in ['{}', None] %}
     <div>Weather Condition
         {% set weather_conditions = activity.weather_condition.replace('{', '').replace('}', '').split(',') %}
         {% for condition in weather_conditions %}

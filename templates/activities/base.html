@@ -35,19 +35,22 @@
         </div>
     </nav>
     <div
-        class="landing-page z-0 fixed inset-0 flex flex-wrap lg:flex-no-wrap justify-center lg:justify-around items-center h-screen bg-gradient-to-tr from-gray-700  via-gray-700 to-amber-800">
+        class="landing-page z-0 fixed inset-0 flex flex-wrap lg:flex-no-wrap justify-center lg:justify-around content-between items-center lg:content-center h-screen bg-gradient-to-tr from-gray-700  via-gray-700 to-amber-800">
 
         <img class="opacity-70 fixed z-10 inset-0 w-auto my-20 lg:my-auto ml-auto mr-auto filter drop-shadow-2xl"
             src="../static/images/climate-connect-bg2-clean.png" alt="">
 
         <div class="z-20 w-screen lg:w-1/3 text-center">
-            <div class="landing-page-text w-1/2 lg:w-full m-auto text-4xl font-bold text-white  rounded ">
-                Connect with others to plan and prepare for activities
+            <div
+                class=" w-1/2 lg:w-full mt-20 sm:mt-48 mb-8 md:mb-20 md:mt-64 m-auto lg:m-auto text-4xl font-bold text-white  rounded ">
+                <p id="landing-page-text" class="landing-page-text transition-opacity delay-150"> Connect with others to
+                    plan and prepare
+                    for activities</p>
             </div>
         </div>
 
         <div
-            class="w-3/4 md:w-1/2 z-20 lg:w-2/6 lg:mr-0 justify-center  p-5 items-center text-center rounded bg-gray-600 bg-opacity-80">
+            class="w-3/4 md:w-1/2 z-20 mb-64 lg:my-auto lg:w-2/6 lg:mr-0 justify-center  p-5 items-center text-center rounded bg-gray-600 bg-opacity-80">
             <h1 class="text-3xl font-bold text-gray-100">
                 Climate Connect
             </h1>
@@ -55,6 +58,7 @@
             {% for category, message in get_flashed_messages(with_categories=True) %}
             <div class="alert alert-{{ category }}">{{ message }}</div>
             {% endfor %}
+
             <form id="sign-in" action="/" method="Post">
 
                 {{ form2.hidden_tag() }} <!--add type=hidden form fields -->
@@ -90,14 +94,14 @@
 
 
                 {% if field.label.text == 'City' %}
-                <h3>Location</h3>
-                <div class="flex">
+                <h3 class="text-gray-100 ">Location</h3>
+                <div class="flex justify-between">
                     {{ field(placeholder=field.label.text , class='w-1/2 rounded border m-1 py-2 px-3
                     appearance-none
                     focus:outline-none focus:shadow-outline ') }}
                     {% elif field.label.text == 'State' %}
 
-                    {{ field(placeholder=field.label.text , class='w-1/2 rounded border m-1 py-2 px-3
+                    {{ field(placeholder=field.label.text , class='w-1/2 rounded border m-1 mr-0 py-2 px-3
                     appearance-none
                     focus:outline-none focus:shadow-outline inline-block') }}
                     {% else %}

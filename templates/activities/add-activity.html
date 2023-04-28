@@ -3,33 +3,41 @@
 {% block title %}Animals{% endblock %}
 
 {% block content2 %}
+<div class="z-10">
+    <img class="opacity-70 absolute top-60 z-10 inset-0 w-auto my-20 lg:my-auto ml-auto mr-auto filter drop-shadow-2xl"
+        src="../../static/images/climate-connect-cropped.png" alt="">
+</div>
 
+<div class="h-screen">
+    <div class="relative m-auto my-20 w-3/4 md:w-1/2 z-20 mb-64 lg:my-auto lg:w-2/6 lg:mr-0 justify-center  p-5 items-center text-center rounded bg-gray-600 bg-opacity-80"">
+    <form action=" /add-activity" method="Post">
 
-<form action="/add-activity" method="Post">
+        {{ form.hidden_tag() }} <!--add type=hidden form fields -->
 
-    {{ form.hidden_tag() }} <!--add type=hidden form fields -->
+        {% for field in form
+        if field.widget.input_type != 'hidden' %}
 
-    {% for field in form
-    if field.widget.input_type != 'hidden' %}
+        <p>
+            {% if field.name == 'weather_condition' %}
 
-    <p>
-        {% if field.name == 'weather_condition' %}
+            {{ field.label }}
+            {{ field(rows = 7, multiple=True) }}
+            {% else %}
+            {{ field(placeholder=field.label.text , class='w-full rounded border m-1 py-2 px-3
+            appearance-none
+            focus:outline-none focus:shadow-outline') }}
+            {% endif %}
 
-        {{ field.label }}
-        {{ field(rows = 7, multiple=True) }}
-        {% else %}
-        {{ field.label }}
-        {{ field }}
-        {% endif %}
+            {% for error in field.errors %}
+            {{ error }}
+            {% endfor %}
+        </p>
 
-        {% for error in field.errors %}
-        {{ error }}
         {% endfor %}
-    </p>
 
-    {% endfor %}
-
-    <button type="submit">Add Activity</button>
-</form>
+        <button type="submit">Add Activity</button>
+        </form>
+    </div>
+</div>
 
 {% endblock %}
