@@ -11,5 +11,6 @@ img{
 }
 
 #landing-page-text {
-    transition: all 1s ease-in;
+    opacity: 0;
+  transition: opacity 0.5s ease-in-out;
   }

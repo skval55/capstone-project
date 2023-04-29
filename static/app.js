@@ -25,6 +25,7 @@ const landingPageTextArray = [
 ];
 setInterval(function () {
   $(".landing-page-text").text(landingPageTextArray[counter]);
+  $(".landing-page-text").css("opacity", 1);
   if (counter == 1) {
     counter = 0;
   } else {
@@ -39,9 +40,16 @@ async function getDayAndActivity(e) {
   city = response.data.search.city;
   state = response.data.search.state;
   const filteredDays = filterDays(userActivity, dailyData);
-  for (day in filteredDays) {
-    console.log(dailyData[day]);
-    collectHtmlCardData(day, e);
+  const size = Object.keys(filteredDays).length;
+  if (size == 0) {
+    $(`#activity${e.target.id}`).append(
+      "<div class='text-xl font-bold text-gray-200'>No days fit this activity</div>"
+    );
+  } else {
+    for (day in filteredDays) {
+      console.log(dailyData[day]);
+      collectHtmlCardData(day, e);
+    }
   }
 }
 
@@ -92,20 +100,30 @@ function collectHtmlCardData(day, e) {
 function makeHtmlTemplate(dataToSend) {
   $(`#activity${dataToSend.activityId}`).append(`<div> <div class="temps${
     dataToSend.dayIndex
-  }">best time to go ${dataToSend.activity} would be in the ${
-    dataToSend.timeOfDay
-  }</div>
-    <div class=' ${
+  }">best time to go ${dataToSend.activity} would be on ${
+    dataToSend.times.dt
+  } in the ${dataToSend.timeOfDay}</div>
+    <div class=' grid shadow-inner grid-cols-1 sm:grid-cols-2 sm:gap-4 rounded border-solid  p-3 ${
       dataToSend.theme
     }'><img src="https://openweathermap.org/img/wn/${
     dataToSend.icon
   }@2x.png" alt="">
+  <div class="mt-3 ">
+  <div>${dataToSend.city}, ${dataToSend.state}</div>
     <h3>${dataToSend.times.dt}</h3>
+    </div>
+    <div>
     <div>${dataToSend.weather.description}</div>
-   <div>High: ${dataToSend.temp.max} Low: ${dataToSend.temp.min}</div>
-   <div>Morning: ${dataToSend.temp.morn} Day: ${dataToSend.temp.day} Evening: ${
-    dataToSend.temp.eve
-  } Night: ${dataToSend.temp.night}</div>
+   <div>High: ${dataToSend.temp.max}&#8457 Low: ${
+    dataToSend.temp.min
+  }&#8457</div>
+   <div>Morning: ${dataToSend.temp.morn}&#8457 <br> Day: ${
+    dataToSend.temp.day
+  }&#8457 <br> Evening: ${dataToSend.temp.eve}&#8457 <br> Night: ${
+    dataToSend.temp.night
+  }&#8457</div>
+  </div>
+  <div>
     <div>Sunrise ${dataToSend.times.sunrise}</div>
     <div>Sunset ${dataToSend.times.sunset}</div>
     <div class="${dataToSend.showMoon} ">
@@ -116,11 +134,14 @@ function makeHtmlTemplate(dataToSend) {
     <div>Percentage of Rain ${dataToSend.rain}%</div>
     <div>UVI ${dataToSend.uvi} (highest between 11am - 2pm)</div>
     </div>
+    </div>
     <form action='/make-post/${dataToSend.activityId}' method='post'>
     <input class='hidden' name='day-data' id="day-data" value='${JSON.stringify(
       dataToSend
     )}' type='text'>
-    <button id='${dataToSend.dayIndex}' type='submit' >Make post</button>
+    <button id='${
+      dataToSend.dayIndex
+    }' type='submit' class="border my-2 ml-0 px-3 py-1 bg-gray-500 rounded hover:bg-gray-700" >Make post</button>
     </form>
     </div>
     `);

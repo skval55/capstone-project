@@ -1,0 +1,19 @@
+{
+    "name": "climate-connect",
+    "scripts": {
+      "tw-build": "npx tailwindcss -i ./static/css/src/input.css -o ./static/css/dist/output.css --minify --watch"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/skval55/capstone-project.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/skval55/capstone-project/issues"
+    },
+    "homepage": "https://github.com/skval55/capstone-project#readme",
+    "devDependencies": {
+      "tailwindcss": "^3.3.1"
+    }
+  }

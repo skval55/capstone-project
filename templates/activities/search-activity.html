@@ -4,79 +4,101 @@
 {% endblock %}
 
 {% block content2 %}
-<h3> location set to</h3>
-<div>City: <span class='city'>{{user.city}}</span>
-</div>
-<div>State: <span class="state">{{user.state}}</span>
-</div>
-<form id="load" action="">
-    <label for="city">City</label>
-    <input id="city" type="text" placeholder="Enter a City">
-    <label for="state">State</label>
-    <input id="state" type="text" placeholder="Enter a State">
+<h3 class="text-center mt-2 text-xl font-bold text-gray-100"> location set to <span class='city'>{{user.city}}</span>,
+    <span class="state">{{user.state}}</span>
+</h3>
 
-    <button id="changeLocation" type="submit">Change Location</button>
+<form class="text-center" id="load" action="">
+    <input class=' bg-gray-200 rounded border m-1 py-2 px-3
+    appearance-none
+    focus:outline-none focus:shadow-outline' id="city" type="text" placeholder="Enter a City">
+    <input class=' bg-gray-200 rounded border m-1 py-2 px-3
+    appearance-none
+    focus:outline-none focus:shadow-outline' id="state" type="text" placeholder="Enter a State">
+
+    <button class="border px-3 py-1 bg-gray-300 rounded hover:bg-gray-500" id="changeLocation" type="submit">Change
+        Location</button>
 </form>
+<div class="posts flex z-10 flex-wrap justify-center gap-3 bg-zinc-700 text-gray-200 ">
+    <div class="container md:w-3/4">
 
-{% for activity in activities %}
-<div>
-    {{activity.name}}
-    {% if activity.min_temp %}
-    <div> Min temp:
-        {{activity.min_temp}}
-    </div>
-    {% endif %}
-    {% if activity.max_temp %}
-    <div> Max temp:
-        {{activity.max_temp}}
-    </div>
-    {% endif %}
-    <div>
-        {% if activity.sun %}
-        Daylight: Yes
-        {% else %}
-        Daylight: No
-        {% endif %}
-    </div>
-    <div>
-        {% if activity.show_moon %}
-        Show moon details: Yes
-        {% else %}
-        Show moon details: No
-        {% endif %}
-    </div>
-    {% if activity.moon_phase %}
-    <div> Moon phase:
-        {{activity.moon_phase}}</div>
-    {% endif %}
-    {% if activity.weather_condition not in ['{}', None] %}
-    <div>Weather Condition
-        {% set weather_conditions = activity.weather_condition.replace('{', '').replace('}', '').split(',') %}
-        {% for condition in weather_conditions %}
-        <div>{{condition}}</div>
+        {% for activity in activities %}
+        <div class="w-90 bg-zinc-800  rounded flex flex-col p-3 justify-between gap-2 m-2">
+            <h3 class="text-center text-xl font-bold text-gray-100 capitalize">{{activity.name}}</h3>
+
+            <span class="bg-zinc-700 text-center rounded">
+                {% if activity.min_temp %}
+
+                <div>
+                    <span class="font-bold ">
+                        Min temp: </span>
+                    {{activity.min_temp}}&#8457
+                </div>
+                {% endif %}
+                {% if activity.max_temp %}
+                <div> <span class="font-bold">Max temp:</span>
+                    {{activity.max_temp}}&#8457
+                </div>
+                {% endif %}
+                <div>
+                    {% if activity.sun %}
+                    <span class="font-bold">Daylight:</span> Yes
+                    {% else %}
+                    <span class="font-bold">Daylight:</span> No
+                    {% endif %}
+                </div>
+                <div>
+                    {% if activity.show_moon %}
+                    <span class="font-bold">Show moon details:</span> Yes
+                    {% else %}
+                    <span class="font-bold">Show moon details:</span> No
+                    {% endif %}
+                </div>
+                {% if activity.moon_phase %}
+                <div><span class="font-bold"> Moon phase:</span>
+                    {{activity.moon_phase}}</div>
+                {% endif %}
+                {% if activity.weather_condition not in ['{}', None] %}
+                <div><span class="font-bold"> Weather Condition</span>
+                    {% set weather_conditions = activity.weather_condition.replace('{', '').replace('}',
+                    '').split(',')
+                    %}
+                    {% for condition in weather_conditions %}
+                    <div>{{condition}}</div>
+                    {% endfor %}
+
+                </div>
+                {% endif %}
+                {% if activity.uvi %}
+                <div><span class="font-bold">UVI Index:</span>
+                    {{activity.uvi.replace(',','-')}}
+                </div>
+
+
+                {% endif %}
+            </span>
+            <div class="flex justify-between">
+                <button class="search-day border px-3 py-1 bg-gray-500 rounded hover:bg-gray-700"
+                    id="{{activity.id}}">search for day</button>
+                <div class="flex gap-2">
+                    <form action="/edit-activity/{{activity.id}}">
+                        <button class="border px-3 py-1 bg-gray-500 rounded hover:bg-gray-700"
+                            type="submit">Edit</button>
+                    </form>
+                    <form action="/delete-activity/{{activity.id}}">
+                        <button class="border px-3 py-1 bg-gray-500 rounded hover:bg-gray-700"
+                            type="submit">Delete</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="days" id="activity{{activity.id}}"></div>
+
+        </div>
+
         {% endfor %}
-
     </div>
-    {% endif %}
-    {% if activity.uvi %}
-    <div>UVI Index:
-        {{activity.uvi.replace(',','-')}}
-    </div>
-    {% endif %}
-    <form action="/edit-activity/{{activity.id}}">
-        <button type="submit">Edit</button>
-    </form>
-    <form action="/delete-activity/{{activity.id}}">
-        <button type="submit">Delete</button>
-    </form>
-
-    <button class="search-day" id="{{activity.id}}">search for day</button>
-
-    <div class="days" id="activity{{activity.id}}"></div>
-
 </div>
-
-{% endfor %}
 
 
 

@@ -5,7 +5,7 @@
 {% block content %}
 
 
-<nav class="sticky w-full  bg-zinc-900 text-white py-2">
+<nav class="sticky w-full z-40 bg-zinc-900 text-white py-2">
     <div class=" px-3">
         <ul class="flex justify-between">
             <li class="flex">
@@ -52,7 +52,7 @@
     </div>
 </nav>
 
-<div class="bg-zinc-800 z-40 text-gray-200 py-3 flex shadow-lg shadow-black ">
+<div class="relative bg-zinc-800 z-40 text-gray-200 py-4 flex shadow-sm shadow-black ">
     <img class="rounded-full border border-solid mx-3" src="{{user.image_url}}" alt="">
     <div class="flex flex-col justify-between w-full">
         <h3 class="text-3xl capitalize ">{{user.username}}</h3>

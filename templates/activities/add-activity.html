@@ -3,25 +3,42 @@
 {% block title %}Animals{% endblock %}
 
 {% block content2 %}
-<div class="z-10">
-    <img class="opacity-70 absolute top-60 z-10 inset-0 w-auto my-20 lg:my-auto ml-auto mr-auto filter drop-shadow-2xl"
-        src="../../static/images/climate-connect-cropped.png" alt="">
+<div class="h-screen w-screen fixed bg-gradient-to-tl top-0 z-0 from-gray-700  via-gray-700 to-amber-800"></div>
+<div class="z-10 ">
+    <img class="opacity-70 absolute top-20 object-cover h-screen w-full lg:w-screen z-0 inset-0 my-20  ml-auto mr-auto filter drop-shadow-2xl"
+        src="../../static/images/add-activity-bg.png" alt="">
 </div>
 
-<div class="h-screen">
-    <div class="relative m-auto my-20 w-3/4 md:w-1/2 z-20 mb-64 lg:my-auto lg:w-2/6 lg:mr-0 justify-center  p-5 items-center text-center rounded bg-gray-600 bg-opacity-80"">
-    <form action=" /add-activity" method="Post">
+<div class="">
+    <div class="relative m-auto mt-3 lg:mt-20 w-3/4 md:w-1/2 z-20 lg:w-2/6  justify-center  p-5 items-center text-center rounded bg-gray-600 bg-opacity-80"">
+        <h3 class=" text-3xl font-bold text-gray-100">Create Activity</h3>
+        <form action=" /add-activity" method="Post">
 
-        {{ form.hidden_tag() }} <!--add type=hidden form fields -->
+            {{ form.hidden_tag() }} <!--add type=hidden form fields -->
 
-        {% for field in form
-        if field.widget.input_type != 'hidden' %}
+            {% for field in form
+            if field.widget.input_type != 'hidden' %}
 
-        <p>
-            {% if field.name == 'weather_condition' %}
-
-            {{ field.label }}
-            {{ field(rows = 7, multiple=True) }}
+            <p>
+                {% if field.name == 'weather_condition' %}
+            <h3 class="text-gray-100 ">Weather Condition</h3>
+            <div class="flex flex-col space-y-2">
+                {% for choice in field.choices %}
+                <label for="weather_condition" class="inline-flex items-center">
+                    <input type="checkbox" id="{{choice[0]}}" name="weather_condition" value="{{choice[0]}}"
+                        class="form-checkbox h-5 w-5 text-gray-700"><span
+                        class="ml-2 text-gray-200 text-sm">{{choice[1]}}</span>
+                </label>
+                {% endfor %}
+            </div>
+            {% elif field.name in ['sun', 'show_moon'] %}
+            {{ field.label(class="text-gray-100 ")}}
+            {{ field(checkbox=True, class='form-checkbox h-5 w-5 text-gray-700') }}
+            {% elif field.name in ['moon_phase', 'uvi'] %}
+            {{ field.label(class="text-gray-100 ")}}
+            {{ field(placeholder=field.label.text , class='w-full rounded border m-1 py-2 px-3
+            appearance-none
+            focus:outline-none focus:shadow-outline') }}
             {% else %}
             {{ field(placeholder=field.label.text , class='w-full rounded border m-1 py-2 px-3
             appearance-none
@@ -31,13 +48,17 @@
             {% for error in field.errors %}
             {{ error }}
             {% endfor %}
-        </p>
+            </p>
 
-        {% endfor %}
+            {% endfor %}
 
-        <button type="submit">Add Activity</button>
+
+
+            <button type="submit" class="border px-3 py-1 bg-gray-300 rounded hover:bg-gray-500">Add
+                Activity</button>
         </form>
     </div>
 </div>
+
 
 {% endblock %}

@@ -3,7 +3,7 @@
 {% block title %}Make Post{% endblock %}
 
 {% block content2 %}
-<div class="posts flex flex-wrap justify-center gap-3 bg-zinc-700 text-gray-200 ">
+<div class="posts flex z-10 flex-wrap justify-center gap-3 bg-zinc-700 text-gray-200 ">
     <div class="container">
         {% for post in posts %}
         <div class="w-90 bg-zinc-800 rounded flex flex-col p-3 justify-between gap-2 m-2">
@@ -26,7 +26,7 @@
 
                 <!-- </div> -->
                 <div
-                    class='grid shadow-inner grid-cols-1 sm:grid-cols-2 sm:gap-4 rounded border-solid  p-2 {{(post.weather_data |json_loads).theme }}'>
+                    class='grid shadow-inner grid-cols-1 sm:grid-cols-2 sm:gap-4 rounded border-solid  p-3 {{(post.weather_data |json_loads).theme }}'>
                     <!-- <div class="flex flex-col"> -->
                     <!-- <div class="flex flex-row justify-around"> -->
                     <img src="https://openweathermap.org/img/wn/{{
@@ -41,14 +41,14 @@
                     <!-- <div class="flex flex-row justify-around"> -->
                     <div>
                         <div>{{(post.weather_data |json_loads).weather.description}}</div>
-                        <div>High: {{(post.weather_data |json_loads).temp.max}} Low: {{(post.weather_data
-                            |json_loads).temp.min}}
+                        <div>High: {{(post.weather_data |json_loads).temp.max}}&#8457 Low: {{(post.weather_data
+                            |json_loads).temp.min}}&#8457
                         </div>
-                        <div>Morning: {{(post.weather_data |json_loads).temp.morn}} <br> Day: {{(post.weather_data
-                            |json_loads).temp.day}} <br>
+                        <div>Morning: {{(post.weather_data |json_loads).temp.morn}}&#8457 <br> Day: {{(post.weather_data
+                            |json_loads).temp.day}}&#8457 <br>
                             evening: {{
                             (post.weather_data |json_loads).temp.eve
-                            }} <br> Night: {{(post.weather_data |json_loads).temp.night}}</div>
+                            }}&#8457 <br> Night: {{(post.weather_data |json_loads).temp.night}}&#8457</div>
                     </div>
 
                     <div>
