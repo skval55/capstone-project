@@ -14,7 +14,7 @@ class UserAddForm(FlaskForm):
     image_url = StringField('(Optional) Image URL')
     city = StringField('City',validators=[DataRequired()])
     state = StringField('State',validators=[DataRequired()])
-    
+
 class EditUserForm(FlaskForm):
     """Form for adding users."""
 
@@ -51,4 +51,4 @@ class MakePostForm(FlaskForm):
 
     title = StringField('Title', validators=[DataRequired()])
     description = StringField('Description')
-    public = BooleanField('Make public')
+    # public = BooleanField('Make public')

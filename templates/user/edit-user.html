@@ -1,0 +1,43 @@
+{% extends 'user/user.html' %}
+
+
+
+{% block content2 %}
+
+
+{% for category, message in get_flashed_messages(with_categories=True) %}
+<div class="alert alert-{{ category }}">{{ message }}</div>
+{% endfor %}
+<div class=" absolute h-screen w-screen bg-gradient-to-tr from-gray-700 to-amber-800">
+    <div class="container w-5/6 lg:w-1/2 m-auto rounded bg-gray-600 bg-opacity-60 p-5 mt-3 rounded">
+        <h3 class=" text-3xl font-bold text-gray-100 text-center">Edit User</h3>
+        <form action="/users/edit" method="Post">
+
+            {{ form.hidden_tag() }} <!--add type=hidden form fields -->
+
+            {% for field in form
+            if field.widget.input_type != 'hidden' %}
+
+            <p>
+
+                {{ field(value=user[field.id] ,placeholder=field.label.text , class='w-full rounded border m-1 ml-0 py-2
+                px-3
+                appearance-none
+                focus:outline-none focus:shadow-outline') }}
+
+                {% for error in field.errors %}
+                {{ error }}
+                {% endfor %}
+            </p>
+
+            {% endfor %}
+            <div class="flex justify-center gap-2">
+                <button class="border px-3 py-1 bg-gray-300 rounded hover:bg-gray-500" type="submit">Save</button>
+
+                <a class="border px-3 py-1 bg-gray-300 rounded hover:bg-gray-500" href="/homepage">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

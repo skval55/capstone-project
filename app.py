@@ -64,6 +64,8 @@ def add_user_to_g():
 @app.route('/', methods=["GET", "POST"])
 def login_page():
     """page to log in or sign up"""
+    if CURR_USER_KEY in session:
+        return redirect('/homepage')
 
     form1 = UserAddForm()
     form2 = LoginForm()
@@ -88,16 +90,14 @@ def login_page():
                 lat= lat,
                 lon=lon
             )
-            print(user)
-            print('*******************************')
             db.session.commit()
 
         except IntegrityError:
             flash("Username or email already taken")
-            return render_template('activities/base.html', form1=form1, form2=form2)
+            return render_template('landing.html', form1=form1, form2=form2)
         
         do_login(user)
-        return redirect("/homepage/posts")
+        return redirect("/homepage")
 
     if form2.validate_on_submit():
     
@@ -105,25 +105,17 @@ def login_page():
             username=form2.username.data,
             password=form2.password.data
             )
-
-        print(user)
-        print("*****************************************")
         if user:
             do_login(user)
-            return redirect("/homepage/posts")
+            return redirect("/homepage")
 
         
         flash("Incorrect Username or Password")
-        return render_template('base.html', form1=form1, form2=form2)
+        return render_template('landing.html', form1=form1, form2=form2)
 
         
-    return render_template('activities/base.html', form1=form1, form2=form2)
+    return render_template('landing.html', form1=form1, form2=form2)
 
-
-@app.route('/homepage')
-def homepage():
-
-    return render_template('activities/home.html')
 
 @app.route('/logout')
 def logout():
@@ -133,15 +125,20 @@ def logout():
     return redirect('/')
 
 
+###############################################################
+# main page for user with user posts
+
+@app.route('/homepage')
+def show_posts():
+    user = g.user
+    posts = Post.query.filter(Post.user_Id == user.id)
+
+    return render_template('posts/posts.html', posts=posts, user=user)
+
+
 ##############################################################
 # user routes
 
-@app.route('/users')
-def show_profile():
-    """show user profile"""
-    user = g.user
-
-    return render_template('activities/user.html', user = user)
 
 @app.route('/users/edit', methods=['POST','GET'])
 def edit_user():
@@ -159,15 +156,15 @@ def edit_user():
         user.state = form.state.data
         db.session.commit()
 
-        return redirect('/homepage/posts')
+        return redirect('/homepage')
 
-    return render_template('activities/edit-user.html', user = user, form = form)
+    return render_template('user/edit-user.html', user = user, form = form)
 
 @app.route('/users/delete/sure')
 def permission_to_delete():
     """page to be sure ro delete profile"""
     user = g.user
-    return render_template('activities/sure-delete.html', user=user)
+    return render_template('user/sure-delete.html', user=user)
 
 
 @app.route('/users/delete', methods=['POST'])
@@ -289,7 +286,7 @@ def make_post(activity_id):
     user = g.user
     activity = Activity.query.get_or_404(activity_id)
 
-    return render_template('activities/make-post.html', form=form, user=user, activity = activity, day=day )
+    return render_template('posts/make-post.html', form=form, user=user, activity = activity, day=day )
 
 
 @app.route('/make-post/post' , methods=['POST'])
@@ -307,21 +304,13 @@ def post_post():
             activity_Id = day['activityId'],
             title = form.data['title'],
             description = form.data['description'],
-            weather_data = json.dumps(day),
-            public = form.data['public']
+            weather_data = json.dumps(day)
+            # public = form.data['public']
         )
         db.session.add(post)
         db.session.commit()
-        return redirect('/homepage/posts')
+        return redirect('/homepage')
 
-
-
-@app.route('/homepage/posts')
-def show_posts():
-    user = g.user
-    posts = Post.query.filter(Post.user_Id == user.id)
-
-    return render_template('activities/posts.html', posts=posts, user=user)
 
 @app.route('/delete-post/<int:post_id>')
 def delete_post(post_id):
@@ -331,9 +320,9 @@ def delete_post(post_id):
     db.session.delete(post)
     db.session.commit()
 
-    return redirect('/homepage/posts')
+    return redirect('/homepage')
 
-@app.route('/edit-post/<int:post_id>', methods=['POST'])
+@app.route('/edit-post/<int:post_id>', methods=['POST', "GET"])
 def edit_post(post_id):
 
     user = g.user
@@ -342,13 +331,13 @@ def edit_post(post_id):
     if form.validate_on_submit():
         post.title = form.title.data
         post.description = form.description.data
-        post.public = form.public.data
+        # post.public = form.public.data
         db.session.commit()
 
-        return redirect('/homepage/posts')
+        return redirect('/homepage')
     
 
-    return render_template('activities/edit-post.html', user= user, form=form, post=post)
+    return render_template('posts/edit-post.html', user= user, form=form, post=post)
 
 def serialize_activity(activity):
     """make activity serialized for json"""
@@ -379,7 +368,7 @@ def search_activity(activity_id):
     activity = Activity.query.get_or_404(activity_id)
     serialized_activity = serialize_activity( activity)
 
-    return jsonify(search = {'activity':serialized_activity, 'city':user.city, 'state':user.state})
+    return jsonify(search = {'activity':serialized_activity})
 
 @app.route('/api/get-day-data')
 def search_day_data():
@@ -389,7 +378,7 @@ def search_day_data():
     response = requests.get(f'https://api.openweathermap.org/data/3.0/onecall?lat={user.lat}&lon={user.lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128' )
     days = json.loads(response.text)
 
-    return jsonify(search = {'days':days})
+    return jsonify(search = {'days':days, 'city':user.city, 'state':user.state})
     
 
 

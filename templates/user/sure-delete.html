@@ -1,0 +1,16 @@
+{% extends 'home.html' %}
+
+
+
+{% block content %}
+<div class="container w-5/6  box-border m-auto text-center mt-20 bg-gray-500 md:w-1/2 rounded">
+    <h3 class=" text-3xl font-bold text-gray-100 text-center">Are you sure you want to delete {{user.username}}?</h3>
+
+    <form action="/users/delete" class="flex justify-center gap-3 p-3" method="POST">
+        <button class="border px-3 py-1 bg-gray-300 rounded hover:bg-red-700 hover:bg-opacity-60"
+            type="submit">Yes</button>
+        <a class="border px-3 py-1 bg-gray-300 rounded hover:bg-gray-500" href="/homepage">Cancel</a>
+    </form>
+</div>
+
+{% endblock %}

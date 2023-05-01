@@ -37,8 +37,7 @@ async function getDayAndActivity(e) {
   $(".days").html("");
   const response = await axios.get(`/api/search-activity/${e.target.id}`);
   userActivity = response.data.search.activity;
-  city = response.data.search.city;
-  state = response.data.search.state;
+
   const filteredDays = filterDays(userActivity, dailyData);
   const size = Object.keys(filteredDays).length;
   if (size == 0) {
@@ -76,6 +75,8 @@ function collectHtmlCardData(day, e) {
     moonrise: makeTimeReadable(dayData.moonrise),
     moonset: makeTimeReadable(dayData.moonset),
   };
+  console.log(city);
+  console.log("this should be working");
   const dataToSend = {
     city: city,
     state: state,
@@ -170,6 +171,8 @@ function makeTimeReadable(time) {
 async function getData() {
   const response = await axios.get(`/api/get-day-data`);
   dailyData = response.data.search.days.daily;
+  city = response.data.search.city;
+  state = response.data.search.state;
 }
 
 async function changeLocation(e) {
@@ -191,6 +194,7 @@ async function changeLocation(e) {
   $("#state").val("");
   $(".city").text(city);
   $(".state").text(state);
+  console.log(city);
 }
 
 function filterDays(activity, days) {
