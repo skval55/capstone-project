@@ -9,6 +9,8 @@ db = SQLAlchemy()
 
 now = datetime.utcnow
 
+############################################################    
+# for later 
 class Follows(db.Model):
     """Connection of a follower <-> followed_user."""
 
@@ -59,6 +61,7 @@ class Going(db.Model):
         db.ForeignKey('users.id', ondelete="cascade"),
         primary_key=True,
     )
+ ##########################################################################   
 
 class User(db.Model):
     """user model with connection to likes, activities, follows"""
@@ -117,6 +120,13 @@ class User(db.Model):
 
     activities = db.relationship('Activity', cascade="all, delete-orphan")
 
+
+    posts = db.relationship(
+        'Post',
+        backref = 'user'
+    )
+##################################################################    
+# For later
     likes = db.relationship(
         'Activity',
         secondary="likes"
@@ -251,5 +261,5 @@ def connect_db(app):
 
     db.app = app
     db.init_app(app)
-    # app.app_context().push()
+    app.app_context().push()
 

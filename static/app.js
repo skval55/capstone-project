@@ -1,28 +1,25 @@
+// ***********************************************
+// global variables
+
 let dailyData;
 let userActivity;
 let city = "";
 let state = "";
+
+// ***********************************************
+// event listeners
 $(".search-day").click(getDayAndActivity);
 $("#changeLocation").click(changeLocation);
 $("#load").ready(getData);
-// $(".delete-post").click(deletePost);
 
-// async function deletePost(e) {
-//   console.log(e.target.value);
-//   const response = await axios.get(`/api/delete-post/${e.target.value}`);
-//   console.log(response);
-// }
-
-$(".show-sign-up-form").click(function (e) {
-  e.preventDefault();
-  $("#sign-in").toggleClass("hidden");
-  $("#sign-up").toggleClass("hidden");
-});
+// **********************************************
+// landing page changing text
 let counter = 0;
 const landingPageTextArray = [
   "Easily plan activities according to the weather",
   "Connect with others to plan and prepare for activities",
 ];
+
 setInterval(function () {
   $(".landing-page-text").text(landingPageTextArray[counter]);
   $(".landing-page-text").css("opacity", 1);
@@ -33,6 +30,46 @@ setInterval(function () {
   }
 }, 3500);
 
+// **********************************************
+// Toggle between sign up and sign in form
+$(".show-sign-up-form").click(function (e) {
+  e.preventDefault();
+  $("#sign-in").toggleClass("hidden");
+  $("#sign-up").toggleClass("hidden");
+  $("#sign-up  span").text("");
+  $("#sign-in span").text("");
+});
+
+async function changeLocation(e) {
+  e.preventDefault();
+  $("#flash-container-js").addClass("hidden");
+  $("#flash-container-js").text("");
+  city = $("#city").val();
+  state = $("#state").val();
+  try {
+    const response = await axios.get(
+      `http://api.openweathermap.org/geo/1.0/direct?q=${city},${state},USA&limit=1&appid=296cd6aaf1d515387c708caa99264128`
+    );
+    const lat = response.data[0].lat;
+    const lon = response.data[0].lon;
+    const weatherResponse = await axios.get(
+      `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128`
+    );
+    dailyData = weatherResponse.data.daily;
+
+    $("#city").val("");
+    $("#state").val("");
+    $(".city").text(city);
+    $(".state").text(state);
+    console.log(city);
+  } catch (error) {
+    $("#flash-container-js").text("City/State not found");
+    $("#flash-container-js").toggleClass("hidden");
+  }
+}
+
+// **********************************************
+// gets activity and days and filters the days to put on screen the filtered days
 async function getDayAndActivity(e) {
   $(".days").html("");
   const response = await axios.get(`/api/search-activity/${e.target.id}`);
@@ -136,7 +173,7 @@ function makeHtmlTemplate(dataToSend) {
     <div>UVI ${dataToSend.uvi} (highest between 11am - 2pm)</div>
     </div>
     </div>
-    <form action='/make-post/${dataToSend.activityId}' method='post'>
+    <form action='/make-post' method='post'>
     <input class='hidden' name='day-data' id="day-data" value='${JSON.stringify(
       dataToSend
     )}' type='text'>
@@ -173,28 +210,6 @@ async function getData() {
   dailyData = response.data.search.days.daily;
   city = response.data.search.city;
   state = response.data.search.state;
-}
-
-async function changeLocation(e) {
-  e.preventDefault();
-  city = $("#city").val();
-  state = $("#state").val();
-  const response = await axios.get(
-    `http://api.openweathermap.org/geo/1.0/direct?q=${city},${state},USA&limit=1&appid=296cd6aaf1d515387c708caa99264128`
-  );
-  const lat = response.data[0].lat;
-  const lon = response.data[0].lon;
-
-  const weatherResponse = await axios.get(
-    `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128`
-  );
-  dailyData = weatherResponse.data.daily;
-
-  $("#city").val("");
-  $("#state").val("");
-  $(".city").text(city);
-  $(".state").text(state);
-  console.log(city);
 }
 
 function filterDays(activity, days) {
@@ -240,6 +255,8 @@ function filterDays(activity, days) {
   return filteredDays;
 }
 
+// **************************************************
+// Filtering functions
 function filterActivity(activity) {
   const asArray = Object.entries(activity);
   const filtered = asArray.filter(

@@ -21,8 +21,10 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 toolbar = DebugToolbarExtension(app)
 
 
-with app.app_context():
-    connect_db(app)
+# with app.app_context():
+#     connect_db(app)
+
+connect_db(app)
 
 # Custom Jinja2 filter to deserialize JSON strings
 @app.template_filter('json_loads')
@@ -130,10 +132,25 @@ def logout():
 
 @app.route('/homepage')
 def show_posts():
+
+    if CURR_USER_KEY not in session:
+        flash('not authorized', 'top')
+        return redirect('/')
     user = g.user
     posts = Post.query.filter(Post.user_Id == user.id)
 
     return render_template('posts/posts.html', posts=posts, user=user)
+
+@app.route('/explore')
+def show_all_posts():
+
+    if CURR_USER_KEY not in session:
+        flash('not authorized', 'top')
+        return redirect('/')
+    user = g.user
+    posts = Post.query.all()
+
+    return render_template('posts/all-posts.html', posts=posts, user=user)
 
 
 ##############################################################
@@ -143,6 +160,9 @@ def show_posts():
 @app.route('/users/edit', methods=['POST','GET'])
 def edit_user():
     """edit user info"""
+    if CURR_USER_KEY not in session:
+        flash('not authorized', 'top')
+        return redirect('/')
     user = g.user
     form = EditUserForm()
 
@@ -163,6 +183,9 @@ def edit_user():
 @app.route('/users/delete/sure')
 def permission_to_delete():
     """page to be sure ro delete profile"""
+    if CURR_USER_KEY not in session:
+        flash('not authorized', 'top')
+        return redirect('/')
     user = g.user
     return render_template('user/sure-delete.html', user=user)
 
@@ -170,6 +193,9 @@ def permission_to_delete():
 @app.route('/users/delete', methods=['POST'])
 def delete_user():
     """delete user"""
+    if CURR_USER_KEY not in session:
+        flash('not authorized', 'top')
+        return redirect('/')
 
     user = g.user
     db.session.delete(user)
@@ -186,17 +212,18 @@ def delete_user():
 @app.route('/add-activity', methods=['POST', 'GET'])
 def add_activity():
     """show add activity form"""
+    print('add_activity function called')
+    if CURR_USER_KEY not in session:
+        flash('not authorized', 'top')
+        return redirect('/')
 
     user = g.user
 
     form = AddActivityForm()
-    print(form)
-    for field in form:
-        print(field)
-        print('*********************************')
-    print('*********************************')
+
 
     if form.validate_on_submit():
+        print('###################yay$###################')
         data = dict(filter(filter_form, form.data.items()))
         activity = Activity(
             user_Id = session[CURR_USER_KEY],
@@ -211,13 +238,18 @@ def add_activity():
         )
         db.session.add(activity)
         db.session.commit()
-        return redirect('/users')
+        return redirect('/homepage')
 
+    print('form not submitted')
     return render_template('activities/add-activity.html', form = form, user = user)
 
 @app.route('/edit-activity/<int:activity_id>', methods=['POST', 'GET'])
 def editActivity(activity_id):
     """edit activity"""
+    print('ramnnnnnnn')
+    if CURR_USER_KEY not in session:
+        flash('not authorized', 'top')
+        return redirect('/')
     user = g.user
     activity = Activity.query.get_or_404(activity_id)
     form = AddActivityForm()
@@ -228,8 +260,8 @@ def editActivity(activity_id):
         activity.max_temp = data.get('min_temp', None)
         activity.min_temp = data.get('max_temp', None)
         activity.sun = data.get('sun', None)
-        activity.show_moon = data.get('moon_phase', None)
-        activity.moon_phase = data.get('weather_condition', None)
+        activity.show_moon = data.get('show_moon', None)
+        activity.moon_phase = data.get('moon_phase', None)
         activity.weather_condition = data.get('weather_condition', None)
         activity.uvi = data.get('uvi', None)
         db.session.commit()
@@ -242,7 +274,9 @@ def editActivity(activity_id):
 @app.route('/delete-activity/<int:activity_id>')
 def delete_activity(activity_id):
     """delete post"""
-
+    if CURR_USER_KEY not in session:
+        flash('not authorized', 'top')
+        return redirect('/')
     activity = Activity.query.get_or_404(activity_id)
     db.session.delete(activity)
     db.session.commit()
@@ -263,6 +297,9 @@ def filter_form(pair):
 def search_activity_page():
     """show activities so they can choose to search api for one"""
 
+    if CURR_USER_KEY not in session:
+        flash('not authorized', 'top')
+        return redirect('/')
     user = g.user
 
     activities = Activity.query.filter(Activity.user_Id == user.id)
@@ -274,24 +311,31 @@ def search_activity_page():
 # post routes
 
 
-@app.route('/make-post/<int:activity_id>' , methods=['POST', 'GET'])
-def make_post(activity_id):
+@app.route('/make-post' , methods=['POST'])
+def make_post():
     """show make post form and post post to main page"""
+
+    if CURR_USER_KEY not in session:
+        flash('not authorized', 'top')
+        return redirect('/')
     
     dayStr = request.form['day-data']
+    print(dayStr)
     day = json.loads(dayStr)
     session["day_data"] = day
 
     form = MakePostForm()
     user = g.user
-    activity = Activity.query.get_or_404(activity_id)
 
-    return render_template('posts/make-post.html', form=form, user=user, activity = activity, day=day )
+    return render_template('posts/make-post.html', form=form, user=user, day=day )
 
 
 @app.route('/make-post/post' , methods=['POST'])
 def post_post():
 
+    if CURR_USER_KEY not in session:
+        flash('not authorized', 'top')
+        return redirect('/')
     user = g.user
     day = session['day_data']
     print(day)
@@ -315,7 +359,9 @@ def post_post():
 @app.route('/delete-post/<int:post_id>')
 def delete_post(post_id):
     """delete post"""
-
+    if CURR_USER_KEY not in session:
+        flash('not authorized', 'top')
+        return redirect('/')
     post = Post.query.get_or_404(post_id)
     db.session.delete(post)
     db.session.commit()
@@ -324,6 +370,10 @@ def delete_post(post_id):
 
 @app.route('/edit-post/<int:post_id>', methods=['POST', "GET"])
 def edit_post(post_id):
+
+    if CURR_USER_KEY not in session:
+        flash('not authorized', 'top')
+        return redirect('/')
 
     user = g.user
     form = MakePostForm()

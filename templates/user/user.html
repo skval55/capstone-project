@@ -5,54 +5,9 @@
 {% block content %}
 
 
-<nav class="sticky w-full z-40 bg-zinc-900 text-white py-2">
-    <div class=" px-3">
-        <ul class="flex justify-between">
-            <li class="flex">
-                <a href="/">
-                    <img src="/static/images/climate-connect-logo2.png" alt="fingerprint"
-                        class="w-11 h-11 md:w-12 md:h-12 mr-4 " id="crimescope-img-header" />
-                </a>
-                <a href="/" class=" text-xl md:text-2xl font-bold text-gray-300 my-auto">ClimateConnect</a>
-            </li>
-            {% if get_flashed_messages() %}
-            <li id="flash-container"
-                class="absolute z-40 top-16 md:top-16 w-full text-center left-1/2 transform -translate-x-1/2 text-2xl font-bold text-emerald-300 bg-black p-4">
-                {% for category, message in
-                get_flashed_messages(with_categories=True) %}
-                <div id="flashed-messages" class="alert alert-{{ category }}">
-                    {{ message }}
-                </div>
-                {% endfor %}
-            </li>
-            {% endif %}
 
-            <li id="flash-container-js"
-                class="hidden absolute z-40 top-16 md:top-16 w-full text-center left-1/2 transform -translate-x-1/2 text-2xl font-bold text-emerald-300 bg-black p-4">
-            </li>
 
-            <li class="my-auto">
-                <ul class="flex space-x-4 mt-1">
-                    {% if not g.user %}
-
-                    {% else %}
-                    <li>
-                        <a href="/homepage"
-                            class="nav-link font-bold text-gray-500 hover:underline hover:text-gray-300">Profile</a>
-                    </li>
-                    <li>
-                        <a href="/logout"
-                            class="nav-link font-bold text-gray-500 hover:underline hover:text-gray-300">Log
-                            out</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </li>
-        </ul>
-    </div>
-</nav>
-
-<div class="relative bg-zinc-800 z-40 text-gray-200 py-4 flex shadow-sm shadow-black ">
+<div class="relative bg-zinc-800 z-30 text-gray-200 py-4 flex shadow-sm shadow-black ">
     <img class="rounded-full border border-solid mx-3" src="{{user.image_url}}" alt="">
     <div class="flex flex-col justify-between w-full">
         <h3 class="text-3xl capitalize ">{{user.username}}</h3>
@@ -64,6 +19,10 @@
             <a class="text-gray-500 hover:underline hover:text-gray-300" href="/users/delete/sure">Delete profile</a>
         </div>
     </div>
+</div>
+<div id="flash-container-js"
+    class=" hidden z-40 top-16 md:top-16 w-full text-center  text-2xl font-bold text-red-900 bg-black p-4">
+    asdfasfsaf
 </div>
 {% block content2 %}{% endblock %}
 
