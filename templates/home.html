@@ -22,7 +22,8 @@
                         <img src="/static/images/climate-connect-logo2.png" alt="fingerprint"
                             class="w-11 h-11 md:w-12 md:h-12 mr-4 " id="crimescope-img-header" />
                     </a>
-                    <a href="/" class=" text-xl md:text-2xl font-bold text-gray-300 my-auto">ClimateConnect</a>
+                    <a href="/"
+                        class="hidden sm:inline-block text-xl md:text-2xl font-bold text-gray-300 my-auto">ClimateConnect</a>
                 </li>
                 {% if get_flashed_messages() %}
                 <li id="flash-container"
@@ -36,7 +37,7 @@
 
 
                 <li class="my-auto">
-                    <ul class="flex space-x-4 mt-1">
+                    <ul class="flex space-x-4 mt-1 ">
                         {% if not g.user %}
 
                         {% else %}
