@@ -21,10 +21,10 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 toolbar = DebugToolbarExtension(app)
 
 
-# with app.app_context():
-#     connect_db(app)
+with app.app_context():
+    connect_db(app)
 
-connect_db(app)
+# connect_db(app)
 
 # Custom Jinja2 filter to deserialize JSON strings
 @app.template_filter('json_loads')
