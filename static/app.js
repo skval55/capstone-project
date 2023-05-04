@@ -10,7 +10,9 @@ let state = "";
 // event listeners
 $(".search-day").click(getDayAndActivity);
 $("#changeLocation").click(changeLocation);
-$("#load").ready(getData);
+$(".load").ready(getData);
+
+//
 
 // **********************************************
 // landing page changing text
@@ -20,15 +22,19 @@ const landingPageTextArray = [
   "Connect with others to plan and prepare for activities",
 ];
 
-setInterval(function () {
-  $(".landing-page-text").text(landingPageTextArray[counter]);
-  $(".landing-page-text").css("opacity", 1);
-  if (counter == 1) {
-    counter = 0;
-  } else {
-    counter++;
-  }
-}, 3500);
+function fadeInandOut() {
+  $("#landing-page-text").fadeOut(500, function () {
+    $(this).text(landingPageTextArray[counter]).fadeIn(500);
+
+    if (counter == 1) {
+      counter = 0;
+    } else {
+      counter++;
+    }
+  });
+}
+
+setInterval(fadeInandOut, 3500);
 
 // **********************************************
 // Toggle between sign up and sign in form

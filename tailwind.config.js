@@ -5,9 +5,6 @@ module.exports = {
     extend: {},
   },
   plugins: [
-    require("@tailwindcss/forms")({
-      strategy: "base",
-      strategy: "class",
-    }),
+    require("@tailwindcss/forms")({ strategy: "base", strategy: "class" }),
   ],
 };

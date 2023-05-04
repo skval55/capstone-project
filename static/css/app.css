@@ -10,7 +10,3 @@ img{
     background-color: rgb(2, 2, 141);
 }
 
-#landing-page-text {
-    opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-  }
