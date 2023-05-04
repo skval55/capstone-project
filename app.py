@@ -65,10 +65,14 @@ def add_user_to_g():
 
 @app.route('/', methods=["GET", "POST"])
 def login_page():
-    """page to log in or sign up"""
+    """page to log in or sign up
+    
+    pulls up 2 forms(sign in or sign up) and hides one of them at a time
+    """
     if CURR_USER_KEY in session:
         return redirect('/homepage')
 
+    session.pop('_flashes', None)
     form1 = UserAddForm()
     form2 = LoginForm()
 
@@ -132,6 +136,7 @@ def logout():
 
 @app.route('/homepage')
 def show_posts():
+    """home page has user posts"""
 
     if CURR_USER_KEY not in session:
         flash('not authorized', 'top')
@@ -143,6 +148,7 @@ def show_posts():
 
 @app.route('/explore')
 def show_all_posts():
+    """page to show all posts from all users"""
 
     if CURR_USER_KEY not in session:
         flash('not authorized', 'top')
@@ -159,7 +165,7 @@ def show_all_posts():
 
 @app.route('/users/edit', methods=['POST','GET'])
 def edit_user():
-    """edit user info"""
+    """page with form to edit user info"""
     if CURR_USER_KEY not in session:
         flash('not authorized', 'top')
         return redirect('/')
@@ -182,7 +188,7 @@ def edit_user():
 
 @app.route('/users/delete/sure')
 def permission_to_delete():
-    """page to be sure ro delete profile"""
+    """page to be sure to delete profile"""
     if CURR_USER_KEY not in session:
         flash('not authorized', 'top')
         return redirect('/')
@@ -192,7 +198,7 @@ def permission_to_delete():
 
 @app.route('/users/delete', methods=['POST'])
 def delete_user():
-    """delete user"""
+    """delete user post"""
     if CURR_USER_KEY not in session:
         flash('not authorized', 'top')
         return redirect('/')
@@ -211,7 +217,7 @@ def delete_user():
 
 @app.route('/add-activity', methods=['POST', 'GET'])
 def add_activity():
-    """show add activity form"""
+    """show add activity form and post route as well"""
     print('add_activity function called')
     if CURR_USER_KEY not in session:
         flash('not authorized', 'top')
@@ -245,7 +251,7 @@ def add_activity():
 
 @app.route('/edit-activity/<int:activity_id>', methods=['POST', 'GET'])
 def editActivity(activity_id):
-    """edit activity"""
+    """edit activity get and post route"""
     print('ramnnnnnnn')
     if CURR_USER_KEY not in session:
         flash('not authorized', 'top')
@@ -273,7 +279,7 @@ def editActivity(activity_id):
 
 @app.route('/delete-activity/<int:activity_id>')
 def delete_activity(activity_id):
-    """delete post"""
+    """delete activity"""
     if CURR_USER_KEY not in session:
         flash('not authorized', 'top')
         return redirect('/')
@@ -332,6 +338,7 @@ def make_post():
 
 @app.route('/make-post/post' , methods=['POST'])
 def post_post():
+    """post the post route"""
 
     if CURR_USER_KEY not in session:
         flash('not authorized', 'top')
@@ -358,7 +365,7 @@ def post_post():
 
 @app.route('/delete-post/<int:post_id>')
 def delete_post(post_id):
-    """delete post"""
+    """delete post route"""
     if CURR_USER_KEY not in session:
         flash('not authorized', 'top')
         return redirect('/')
@@ -370,6 +377,7 @@ def delete_post(post_id):
 
 @app.route('/edit-post/<int:post_id>', methods=['POST', "GET"])
 def edit_post(post_id):
+    """edit post route"""
 
     if CURR_USER_KEY not in session:
         flash('not authorized', 'top')
@@ -413,7 +421,7 @@ def serialize_activity(activity):
 
 @app.route('/api/search-activity/<int:activity_id>')
 def search_activity(activity_id):
-    """show activities so they can choose to search api for one"""
+    """api call for api to filter weather data through"""
     user = g.user
     activity = Activity.query.get_or_404(activity_id)
     serialized_activity = serialize_activity( activity)
@@ -422,7 +430,7 @@ def search_activity(activity_id):
 
 @app.route('/api/get-day-data')
 def search_day_data():
-    """show activities so they can choose to search api for one"""
+    """api call for weather data and user city and state"""
 
     user = g.user
     response = requests.get(f'https://api.openweathermap.org/data/3.0/onecall?lat={user.lat}&lon={user.lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128' )

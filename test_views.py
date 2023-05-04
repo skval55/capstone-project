@@ -83,7 +83,7 @@ class UserViewTestCaseLoggedIn(TestCase):
         self.testactivity = activity
 
     def test_homepage(self):
-        """test user user search up"""
+        """test homepage"""
 
 
         with self.client as c:
@@ -98,7 +98,7 @@ class UserViewTestCaseLoggedIn(TestCase):
             self.assertIn('<a class="text-gray-500 hover:underline hover:text-gray-300" href="/add-activity">Add an activity</a>', html)
     
     def test_add_activity(self):
-        """test user user search up"""
+        """test add activity page"""
 
 
         with self.client as c:
@@ -113,7 +113,7 @@ class UserViewTestCaseLoggedIn(TestCase):
             self.assertIn('<h3 class=" text-3xl font-bold text-gray-100">Create Activity</h3>', html)
     
     def test_add_activity_post(self):
-        """test user user search up"""
+        """test posting an activity"""
         
 
         with self.client as c:
@@ -141,7 +141,7 @@ class UserViewTestCaseLoggedIn(TestCase):
             self.assertIsNotNone(activity)
     
     def test_post_activity_page(self):
-        """test user user search up"""
+        """test create post activity page"""
 
        
         with self.client as c:
@@ -160,7 +160,6 @@ class UserViewTestCaseLoggedIn(TestCase):
     
     def test_post_post(self):
         """Test posting a new post"""
-        print('postpost')
         with self.client as c:
             # Log in the test user
             day_data = day_data = {"city":"St. George","state":"Utah","timeOfDay":["morn"],"dayIndex":"0","temp":{"day":74.68,"eve":78.08,"max":78.35,"min":58.68,"morn":58.68,"night":67.98},"weather":{"description":"clear sky","icon":"01d","id":800,"main":"Clear"},"rain":0,"moonPhase":40,"showMoon":"hidden","uvi":8.15,"icon":"01d","theme":"light","times":{"dt":"Tuesday, 5/2/2023","sunrise":"6:38:47 AM","sunset":"8:23:43 PM","moonrise":"5:34:00 PM","moonset":"5:12:00 AM"},"activity":"Running","activityId":self.testactivity.id}
@@ -192,8 +191,7 @@ class UserViewTestCaseLoggedIn(TestCase):
 
 
     def test_edit_activity(self):
-        """Test to see if you can edit post"""
-        print('postpost44444444')
+        """Test to see if you can edit activity"""
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.testuser.id
@@ -230,8 +228,7 @@ class UserViewTestCaseLoggedIn(TestCase):
             self.assertIn('<h3 class="text-center text-xl font-bold text-gray-100 capitalize">edited</h3>', html)
 
     def test_edit_user(self):
-        """Test to see if you can edit post"""
-        print('postpost44444444')
+        """Test edit user page"""
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.testuser.id
@@ -244,9 +241,8 @@ class UserViewTestCaseLoggedIn(TestCase):
             self.assertIn('<h3 class=" text-3xl font-bold text-gray-100 text-center">Edit User</h3>', html)
 
     
-    def test_edit_user(self):
-        """Test to see if you can edit post"""
-        print('postpost44444444')
+    def test_edit_user_post(self):
+        """Test to see if you can edit user"""
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.testuser.id
