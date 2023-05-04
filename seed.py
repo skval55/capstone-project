@@ -1,6 +1,6 @@
 """Seed database with sample data from CSV Files."""
 
-from app import db
+from app import db, app
 from models import User, Activity, Post
 
 app.app_context().push()
