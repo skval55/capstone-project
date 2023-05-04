@@ -12,7 +12,7 @@ import json
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DATABASE_URL', 'postgresql://fttabldiuuwxmy:495be03231111f0854cbbe340601529803099b82829e39464dfeb73501ca7db9@ec2-44-213-228-107.compute-1.amazonaws.com:5432/d4j5fl5qf1mv3p')
+    'DATABASE_URL', 'postgres://fttabldiuuwxmy:495be03231111f0854cbbe340601529803099b82829e39464dfeb73501ca7db9@ec2-44-213-228-107.compute-1.amazonaws.com:5432/d4j5fl5qf1mv3p')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
