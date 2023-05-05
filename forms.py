@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, Email, Length, Optional
 class UserAddForm(FlaskForm):
     """Form for adding users."""
 
-    username = StringField('Username', validators=[DataRequired()])
+    username = StringField('Username', validators=[DataRequired(), Length(max=15)])
     first_name = StringField('First Name', validators=[DataRequired()])
     last_name = StringField('last Name', validators=[DataRequired()])
     email = StringField('E-mail', validators=[DataRequired(), Email()])
@@ -18,7 +18,7 @@ class UserAddForm(FlaskForm):
 class EditUserForm(FlaskForm):
     """Form for adding users."""
 
-    username = StringField('Username', validators=[DataRequired()])
+    username = StringField('Username', validators=[DataRequired(), Length(max=15)])
     first_name = StringField('First Name', validators=[DataRequired()])
     last_name = StringField('last Name', validators=[DataRequired()])
     email = StringField('E-mail', validators=[DataRequired(), Email()])
