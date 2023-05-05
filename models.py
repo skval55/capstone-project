@@ -251,6 +251,7 @@ class Post(db.Model):
 
     weather_data = db.Column(db.Text)
 
+###### later
     public = db.Column(db.Boolean)
 
 def connect_db(app):

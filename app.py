@@ -267,8 +267,8 @@ def editActivity(activity_id):
     if form.validate_on_submit():
         data = dict(filter(filter_form, form.data.items()))
         activity.name = data.get('name')
-        activity.max_temp = data.get('min_temp', None)
-        activity.min_temp = data.get('max_temp', None)
+        activity.min_temp = data.get('min_temp', None)
+        activity.max_temp = data.get('max_temp', None)
         activity.sun = data.get('sun', None)
         activity.show_moon = data.get('show_moon', None)
         activity.moon_phase = data.get('moon_phase', None)
