@@ -81,10 +81,14 @@ def login_page():
     form2 = LoginForm()
 
     if form1.validate_on_submit():
-        response = requests.get(f'http://api.openweathermap.org/geo/1.0/direct?q={form1.city.data},{form1.state.data},USA&limit=1&appid=296cd6aaf1d515387c708caa99264128' )
-        data = json.loads(response.text)
-        lat = data[0]['lat']
-        lon = data[0]['lon']
+        try:
+            response = requests.get(f'http://api.openweathermap.org/geo/1.0/direct?q={form1.city.data},{form1.state.data},USA&limit=1&appid=296cd6aaf1d515387c708caa99264128' )
+            data = json.loads(response.text)
+            lat = data[0]['lat']
+            lon = data[0]['lon']
+        except:
+            flash("Enter valid city and state")
+            return render_template('landing.html', form1=form1, form2=form2)
 
  
         try:
