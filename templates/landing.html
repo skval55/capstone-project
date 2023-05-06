@@ -58,7 +58,7 @@
 
 
 
-            <form id="sign-in" action="/" method="Post">
+            <form id="sign-in" class="hidden" action="/signin" method="Post">
 
                 {{ form2.hidden_tag() }} <!--add type=hidden form fields -->
 
@@ -72,7 +72,7 @@
                     focus:outline-none focus:shadow-outline') }}
 
                     {% for error in field.errors %}
-                    <span>{{ error }}</span>
+                    <span class="">{{ error }}</span>
                     {% endfor %}
                 </p>
 
@@ -84,7 +84,7 @@
                 <button class="show-sign-up-form text-gray-100 hover:text-gray-300 w-full">Create
                     account</button>
             </form>
-            <form id="sign-up" class="hidden" action="/" method="Post">
+            <form id="sign-up" class="" action="/signup" method="Post">
 
                 {{ form1.hidden_tag() }} <!--add type=hidden form fields -->
 

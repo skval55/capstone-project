@@ -67,7 +67,7 @@ def add_user_to_g():
     else:
         g.user = None
 
-@app.route('/', methods=["GET", "POST"])
+@app.route('/', methods=["GET","POST"])
 def login_page():
     """page to log in or sign up
     
@@ -76,9 +76,43 @@ def login_page():
     if CURR_USER_KEY in session:
         return redirect('/homepage')
 
-    session.pop('_flashes', None)
+    # session.pop('_flashes', None)
     form1 = UserAddForm()
     form2 = LoginForm()
+
+ 
+
+        
+    return render_template('landing.html', form1=form1, form2=form2)
+
+
+@app.route('/signin', methods=['POST'])
+def post_signin():
+
+    form2 = LoginForm()
+
+   
+    if form2.validate_on_submit():
+    
+        user = User.authenticate(
+            username=form2.username.data,
+            password=form2.password.data
+            )
+        if user:
+            do_login(user)
+            return redirect("/homepage")
+
+        
+        flash("Incorrect Username or Password", 'top')
+        return redirect('/')
+
+
+
+@app.route('/signup', methods=['POST'])
+def post_signup():
+
+    form1 = UserAddForm()
+
 
     if form1.validate_on_submit():
         try:
@@ -87,8 +121,9 @@ def login_page():
             lat = data[0]['lat']
             lon = data[0]['lon']
         except:
-            flash("Enter valid city and state")
-            return render_template('landing.html', form1=form1, form2=form2)
+            flash("Enter valid city and state", 'top')
+            print("Flash message was sent")
+            return redirect('/')
 
  
         try:
@@ -107,29 +142,16 @@ def login_page():
             db.session.commit()
 
         except IntegrityError:
-            flash("Username or email already taken")
-            return render_template('landing.html', form1=form1, form2=form2)
+            flash("Username or email already taken", 'top')
+            print("Flash message was sent")
+            return redirect('/')
         
         do_login(user)
         return redirect("/homepage")
 
-    if form2.validate_on_submit():
-    
-        user = User.authenticate(
-            username=form2.username.data,
-            password=form2.password.data
-            )
-        if user:
-            do_login(user)
-            return redirect("/homepage")
-
+    flash("Not valid email", 'top')
+    return redirect('/')
         
-        flash("Incorrect Username or Password")
-        return render_template('landing.html', form1=form1, form2=form2)
-
-        
-    return render_template('landing.html', form1=form1, form2=form2)
-
 
 @app.route('/logout')
 def logout():
@@ -439,14 +461,14 @@ def search_activity(activity_id):
 @app.route('/api/get-day-data')
 def search_day_data():
     """api call for weather data and user city and state"""
+    if g.user:
+        user = g.user
+        response = requests.get(f'https://api.openweathermap.org/data/3.0/onecall?lat={user.lat}&lon={user.lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128' )
+        days = json.loads(response.text)
 
-    user = g.user
-    response = requests.get(f'https://api.openweathermap.org/data/3.0/onecall?lat={user.lat}&lon={user.lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128' )
-    days = json.loads(response.text)
-
-    return jsonify(search = {'days':days, 'city':user.city, 'state':user.state})
-    
-
+        return jsonify(search = {'days':days, 'city':user.city, 'state':user.state})
+        
+    return
 
 
 

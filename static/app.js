@@ -10,8 +10,9 @@ let state = "";
 // event listeners
 $(".search-day").click(getDayAndActivity);
 $("#changeLocation").click(changeLocation);
-$(".load").ready(getData);
-
+if ($(".load").length > 0) {
+  $(".load").ready(getData);
+}
 //
 
 // **********************************************
