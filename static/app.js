@@ -5,6 +5,7 @@ let dailyData;
 let userActivity;
 let city = "";
 let state = "";
+let apiKey;
 
 // ***********************************************
 // event listeners
@@ -55,12 +56,12 @@ async function changeLocation(e) {
   state = $("#state").val();
   try {
     const response = await axios.get(
-      `http://api.openweathermap.org/geo/1.0/direct?q=${city},${state},USA&limit=1&appid=296cd6aaf1d515387c708caa99264128`
+      `http://api.openweathermap.org/geo/1.0/direct?q=${city},${state},USA&limit=1&appid=${apiKey}`
     );
     const lat = response.data[0].lat;
     const lon = response.data[0].lon;
     const weatherResponse = await axios.get(
-      `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128`
+      `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=imperial&exclude=hourly,minutely,current&appid=${apiKey}`
     );
     dailyData = weatherResponse.data.daily;
 
@@ -217,6 +218,7 @@ async function getData() {
   dailyData = response.data.search.days.daily;
   city = response.data.search.city;
   state = response.data.search.state;
+  apiKey = response.data.search.apiKey;
 }
 
 function filterDays(activity, days) {

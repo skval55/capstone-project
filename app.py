@@ -7,8 +7,11 @@ from models import db, connect_db, User, Activity, Going, Likes, Follows, Post
 from forms import UserAddForm, LoginForm, AddActivityForm, MakePostForm, EditUserForm
 import requests
 import json
+from dotenv import load_dotenv
 
 
+load_dotenv()
+api_key = os.environ.get('API_KEY')
 app = Flask(__name__)
 
 
@@ -116,7 +119,7 @@ def post_signup():
 
     if form1.validate_on_submit():
         try:
-            response = requests.get(f'http://api.openweathermap.org/geo/1.0/direct?q={form1.city.data},{form1.state.data},USA&limit=1&appid=296cd6aaf1d515387c708caa99264128' )
+            response = requests.get(f'http://api.openweathermap.org/geo/1.0/direct?q={form1.city.data},{form1.state.data},USA&limit=1&appid={api_key}' )
             data = json.loads(response.text)
             lat = data[0]['lat']
             lon = data[0]['lon']
@@ -171,6 +174,7 @@ def show_posts():
     if CURR_USER_KEY not in session:
         flash('not authorized', 'top')
         return redirect('/')
+    print(api_key)
     user = g.user
     posts = Post.query.filter(Post.user_Id == user.id)
 
@@ -463,10 +467,10 @@ def search_day_data():
     """api call for weather data and user city and state"""
     if g.user:
         user = g.user
-        response = requests.get(f'https://api.openweathermap.org/data/3.0/onecall?lat={user.lat}&lon={user.lon}&units=imperial&exclude=hourly,minutely,current&appid=296cd6aaf1d515387c708caa99264128' )
+        response = requests.get(f'https://api.openweathermap.org/data/3.0/onecall?lat={user.lat}&lon={user.lon}&units=imperial&exclude=hourly,minutely,current&appid={api_key}' )
         days = json.loads(response.text)
 
-        return jsonify(search = {'days':days, 'city':user.city, 'state':user.state})
+        return jsonify(search = {'days':days, 'city':user.city, 'state':user.state, 'apiKey':api_key})
         
     return
 
